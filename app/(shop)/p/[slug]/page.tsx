@@ -26,6 +26,27 @@ import { useFavoritesStore } from '@/lib/store/favoritesStore'
 import { formatBRL, getDiscountPercent, getPixPrice } from '@/lib/utils/format'
 import { ProductCard } from '@/components/products/ProductCard'
 
+// Generate a placeholder image based on product category
+function getPlaceholderImage(categorySlug: string): string {
+  const categoryImages: Record<string, string> = {
+    'geladeiras': 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=600&h=600&fit=crop',
+    'fogoes': 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&h=600&fit=crop',
+    'microondas': 'https://images.unsplash.com/photo-1574269909862-7e1d70bb8078?w=600&h=600&fit=crop',
+    'maquinas-lavar': 'https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=600&h=600&fit=crop',
+    'ar-condicionado': 'https://images.unsplash.com/photo-1585338107529-13afc5f02586?w=600&h=600&fit=crop',
+    'ventiladores': 'https://images.unsplash.com/photo-1617375407633-acd67aba7864?w=600&h=600&fit=crop',
+    'tvs': 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=600&h=600&fit=crop',
+    'notebooks': 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600&h=600&fit=crop',
+    'smartphones': 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=600&h=600&fit=crop',
+    'eletronicos': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=600&h=600&fit=crop',
+    'perifericos': 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=600&h=600&fit=crop',
+    'componentes': 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=600&h=600&fit=crop',
+    'acessorios': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=600&fit=crop',
+  }
+  
+  return categoryImages[categorySlug] || 'https://images.unsplash.com/photo-1560472355-536de3962603?w=600&h=600&fit=crop'
+}
+
 interface ProductPageProps {
   params: Promise<{ slug: string }>
 }
@@ -65,6 +86,16 @@ export default function ProductPage({ params }: ProductPageProps) {
   const pixPrice = getPixPrice(product.price)
   const savings = product.originalPrice - product.price
   const relatedProducts = products.filter(p => p.category === product.category && p.id !== product.id).slice(0, 4)
+  
+  // Get image URL with fallback to placeholder
+  const getImageUrl = (index: number = 0) => {
+    const img = product.images?.[index]
+    if (!img || img.startsWith('/products/')) {
+      return getPlaceholderImage(product.categorySlug)
+    }
+    return img
+  }
+  const mainImage = getImageUrl(selectedImage)
 
   const handleAddToCart = () => {
     if (product.stock > 0) {
@@ -73,7 +104,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         name: product.name,
         price: product.price,
         quantity: quantity,
-        image: product.images?.[0] || '📦',
+        image: getImageUrl(0),
       })
       setFeedback('cart')
       setTimeout(() => setFeedback(null), 3000)
@@ -117,15 +148,11 @@ export default function ProductPage({ params }: ProductPageProps) {
           <div className="space-y-4">
             {/* Main Image */}
             <div className="bg-white rounded-2xl border border-border overflow-hidden aspect-square flex items-center justify-center relative group">
-              {product.images?.[selectedImage] ? (
-                <img 
-                  src={product.images[selectedImage]} 
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <Package className="w-32 h-32 text-muted-foreground/30" />
-              )}
+              <img 
+                src={mainImage} 
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
               
               {/* Badges */}
               <div className="absolute top-4 left-4 flex flex-col gap-2">
@@ -163,8 +190,8 @@ export default function ProductPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            {/* Thumbnails */}
-            {product.images && product.images.length > 1 && (
+            {/* Thumbnails - hidden since products use placeholders */}
+            {/* {product.images && product.images.length > 1 && (
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {product.images.map((img, i) => (
                   <button
@@ -176,11 +203,11 @@ export default function ProductPage({ params }: ProductPageProps) {
                         : 'border-border hover:border-primary/50'
                     }`}
                   >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
+                    <img src={getImageUrl(i)} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Product Info */}
