@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Mail, Phone, MapPin, Truck, Shield, CreditCard, Zap, Facebook, Instagram, Youtube, Clock } from 'lucide-react'
+import { siteConfig, formatCurrency } from '@/lib/config'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -19,7 +20,7 @@ export function Footer() {
               </div>
               <div>
                 <p className="font-bold text-sm">Frete Grátis</p>
-                <p className="text-xs text-gray-400">Acima de R$ 299</p>
+                <p className="text-xs text-gray-400">Acima de {formatCurrency(siteConfig.shipping.freeShippingMinimum)}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -36,7 +37,7 @@ export function Footer() {
                 <CreditCard className="w-6 h-6" />
               </div>
               <div>
-                <p className="font-bold text-sm">6x Sem Juros</p>
+                <p className="font-bold text-sm">{siteConfig.payment.maxInstallments}x Sem Juros</p>
                 <p className="text-xs text-gray-400">Em todos produtos</p>
               </div>
             </div>
@@ -45,7 +46,7 @@ export function Footer() {
                 <Zap className="w-6 h-6" />
               </div>
               <div>
-                <p className="font-bold text-sm">10% OFF no Pix</p>
+                <p className="font-bold text-sm">{siteConfig.payment.pixDiscount}% OFF no Pix</p>
                 <p className="text-xs text-gray-400">Desconto instantâneo</p>
               </div>
             </div>
@@ -80,25 +81,25 @@ export function Footer() {
                 <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
                   <Phone className="w-4 h-4 text-blue-400" />
                 </div>
-                <span>(32) 99999-9999</span>
+                <span>{siteConfig.contact.phone}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-300">
                 <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
                   <Mail className="w-4 h-4 text-blue-400" />
                 </div>
-                <span>contato@baratodmais.com.br</span>
+                <span>{siteConfig.contact.email}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-300">
                 <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
                   <MapPin className="w-4 h-4 text-blue-400" />
                 </div>
-                <span>Juiz de Fora - MG</span>
+                <span>{siteConfig.contact.city} - {siteConfig.contact.state}</span>
               </div>
               <div className="flex items-center gap-3 text-sm text-gray-300">
                 <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center">
                   <Clock className="w-4 h-4 text-blue-400" />
                 </div>
-                <span>Seg-Sex: 08:00 - 18:00</span>
+                <span>Seg-Sex: {siteConfig.hours.weekdays}</span>
               </div>
             </div>
           </div>
@@ -182,23 +183,33 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/empresa" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link href="/politica-de-privacidade" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Política de Privacidade
                 </Link>
               </li>
               <li>
-                <Link href="/empresa" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link href="/termos-de-uso" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Termos de Uso
                 </Link>
               </li>
               <li>
-                <Link href="/empresa" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link href="/trocas-e-devolucoes" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Trocas e Devoluções
                 </Link>
               </li>
               <li>
-                <Link href="/empresa" className="text-gray-400 hover:text-blue-400 transition-colors">
+                <Link href="/formas-de-pagamento" className="text-gray-400 hover:text-blue-400 transition-colors">
                   Formas de Pagamento
+                </Link>
+              </li>
+              <li>
+                <Link href="/frete-e-entrega" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Frete e Entrega
+                </Link>
+              </li>
+              <li>
+                <Link href="/contato" className="text-gray-400 hover:text-blue-400 transition-colors">
+                  Contato
                 </Link>
               </li>
             </ul>
@@ -212,7 +223,7 @@ export function Footer() {
               <h4 className="font-bold mb-3 text-center md:text-left">Siga-nos nas redes sociais</h4>
               <div className="flex gap-3">
                 <a 
-                  href="https://facebook.com" 
+                  href={siteConfig.social.facebook}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-blue-600 transition-colors"
@@ -220,7 +231,7 @@ export function Footer() {
                   <Facebook className="w-5 h-5" />
                 </a>
                 <a 
-                  href="https://instagram.com" 
+                  href={siteConfig.social.instagram}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-pink-600 transition-colors"
@@ -228,7 +239,7 @@ export function Footer() {
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a 
-                  href="https://youtube.com" 
+                  href={siteConfig.social.youtube}
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="w-10 h-10 bg-gray-800 rounded-xl flex items-center justify-center hover:bg-red-600 transition-colors"
@@ -258,7 +269,7 @@ export function Footer() {
         {/* Bottom Footer */}
         <div className="border-t border-gray-800 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-            <p>© {currentYear} Barato D+ - CNPJ: 00.000.000/0001-00 - Todos os direitos reservados.</p>
+            <p>© {currentYear} {siteConfig.name} - CNPJ: {siteConfig.contact.cnpj} - Todos os direitos reservados.</p>
             <p>Preços e condições exclusivos para compras no site.</p>
           </div>
         </div>

@@ -12,6 +12,7 @@ import { products } from '@/data/products'
 import { categories } from '@/data/categories'
 import { ProductCard } from '@/components/products/ProductCard'
 import { formatBRL, getDiscountPercent, getPixPrice } from '@/lib/utils/format'
+import { siteConfig, formatCurrency } from '@/lib/config'
 
 // Get products by different criteria
 const getOfertasDaSemana = () => {

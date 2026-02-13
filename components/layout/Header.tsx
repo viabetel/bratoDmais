@@ -14,6 +14,7 @@ import { categories } from '@/data/categories'
 import { useCartStore } from '@/lib/store/cartStore'
 import { useFavoritesStore } from '@/lib/store/favoritesStore'
 import { useUserStore } from '@/lib/store/userStore'
+import { siteConfig, formatCurrency } from '@/lib/config'
 
 const categoryIcons: Record<string, string> = {
   'eletronicos': '⚡',
@@ -68,17 +69,17 @@ export function Header() {
             <div className="hidden md:flex items-center gap-6">
               <div className="flex items-center gap-1.5">
                 <Truck className="w-4 h-4" />
-                <span className="font-medium">Frete Grátis acima de R$ 299</span>
+                <span className="font-medium">Frete Grátis acima de {formatCurrency(siteConfig.shipping.freeShippingMinimum)}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <Zap className="w-4 h-4 text-yellow-300" />
-                <span className="font-medium">10% OFF no Pix</span>
+                <span className="font-medium">{siteConfig.payment.pixDiscount}% OFF no Pix</span>
               </div>
             </div>
             <div className="flex items-center gap-4 mx-auto md:mx-0">
               <div className="flex items-center gap-1.5">
                 <CreditCard className="w-4 h-4" />
-                <span className="font-medium">6x Sem Juros</span>
+                <span className="font-medium">{siteConfig.payment.maxInstallments}x Sem Juros</span>
               </div>
               <div className="hidden sm:flex items-center gap-1.5">
                 <Shield className="w-4 h-4 text-green-300" />
@@ -88,11 +89,11 @@ export function Header() {
             <div className="hidden lg:flex items-center gap-4 text-white/90">
               <div className="flex items-center gap-1">
                 <Phone className="w-3.5 h-3.5" />
-                <span>(32) 99999-9999</span>
+                <span>{siteConfig.contact.phone}</span>
               </div>
               <div className="flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5" />
-                <span>Juiz de Fora - MG</span>
+                <span>{siteConfig.contact.city} - {siteConfig.contact.state}</span>
               </div>
             </div>
           </div>
@@ -273,11 +274,11 @@ export function Header() {
                       <div className="mt-6 space-y-2 text-sm">
                         <div className="flex items-center gap-2">
                           <Truck className="w-4 h-4" />
-                          <span>Frete Grátis +R$299</span>
+                          <span>Frete Grátis +{formatCurrency(siteConfig.shipping.freeShippingMinimum)}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <CreditCard className="w-4 h-4" />
-                          <span>6x Sem Juros</span>
+                          <span>{siteConfig.payment.maxInstallments}x Sem Juros</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Shield className="w-4 h-4" />
