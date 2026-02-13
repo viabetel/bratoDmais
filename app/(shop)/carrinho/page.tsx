@@ -14,9 +14,12 @@ import { products } from '@/data/products'
 import { ProductCard } from '@/components/products/ProductCard'
 import { siteConfig, formatCurrency, calcPixPrice, calcInstallments, calcShipping } from '@/lib/config'
 
+// Prevent static pre-rendering
+export const dynamic = 'force-dynamic'
+
 export default function CartPage() {
   const router = useRouter()
-  const { items, removeItem, updateQuantity, clearCart, getTotal } = useCartStore()
+  const { items, removeItem, updateQuantity, clearCart, getTotalPrice } = useCartStore()
   const [couponCode, setCouponCode] = useState('')
   const [couponApplied, setCouponApplied] = useState<string | null>(null)
   const [couponError, setCouponError] = useState<string | null>(null)
@@ -25,7 +28,7 @@ export default function CartPage() {
   const [selectedShipping, setSelectedShipping] = useState<'standard' | 'express' | 'pickup'>('standard')
   const [linkCopied, setLinkCopied] = useState(false)
 
-  const subtotal = getTotal()
+  const subtotal = getTotalPrice()
   const couponDiscount = couponApplied ? subtotal * 0.1 : 0 // 10% de desconto com cupom
   const shippingCost = shippingResult 
     ? (selectedShipping === 'pickup' ? 0 : (shippingResult.free ? 0 : (selectedShipping === 'express' ? shippingResult.express.price : shippingResult.standard.price)))
@@ -38,7 +41,6 @@ export default function CartPage() {
   const cartProductIds = items.map(i => i.productId)
   const crossSellProducts = products
     .filter(p => !cartProductIds.includes(p.id))
-    .sort(() => Math.random() - 0.5)
     .slice(0, 4)
 
   const handleApplyCoupon = () => {
