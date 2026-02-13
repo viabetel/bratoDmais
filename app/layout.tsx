@@ -1,0 +1,48 @@
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+
+import './globals.css'
+import { PromoBar } from '@/components/common/PromoBar'
+import { Header } from '@/components/layout/Header'
+import { Footer } from '@/components/layout/Footer'
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-geist-sans' })
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
+
+export const metadata: Metadata = {
+  title: 'BARATO D+ - Eletrônicos com Desconto | Produtos Novos e com Garantia',
+  description: 'Compre eletrônicos com desconto em BARATO D+. Parcelado em até 6x, 10% de desconto no Pix, frete rápido em 48 horas. Tudo para sua casa!',
+  keywords: 'eletrônicos, desconto, barato, produtos novos, garantia, frete rápido, pix desconto',
+  openGraph: {
+    title: 'BARATO D+ - Eletrônicos com Desconto',
+    description: 'Compre eletrônicos com desconto em BARATO D+. Parcelado em até 6x, 10% de desconto no Pix, frete rápido.',
+    url: 'https://baroto-dplus.com',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: '#1F43AF',
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={`${geist.variable} ${geistMono.variable} font-sans antialiased bg-background text-foreground`}>
+        <PromoBar />
+        <Header />
+        {children}
+        <Footer />
+      </body>
+    </html>
+  )
+}
