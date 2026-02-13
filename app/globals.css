@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Zoom global do site - tudo 10% menor */
+html {
+  font-size: 14px; /* Base de 16px reduzido para 14px (~87.5%) */
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 14.5px; /* Um pouco maior em desktop */
+  }
+}
+
+@media (min-width: 1280px) {
+  html {
+    font-size: 15px;
+  }
+}
+
 body {
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
