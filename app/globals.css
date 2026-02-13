@@ -2,20 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Zoom global do site - tudo 10% menor */
+/* ========================================
+   ZOOM GLOBAL - Site 80% do tamanho normal
+   ======================================== */
+
+/* Container principal com zoom */
+#__next,
+main,
+.zoom-container {
+  transform-origin: top center;
+}
+
+/* Reduz tamanho base da fonte (afeta rem/em) */
 html {
-  font-size: 14px; /* Base de 16px reduzido para 14px (~87.5%) */
+  font-size: 13px; /* Era 16px, agora ~81% */
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 13.5px;
+  }
 }
 
 @media (min-width: 1024px) {
   html {
-    font-size: 14.5px; /* Um pouco maior em desktop */
+    font-size: 14px;
   }
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 1536px) {
   html {
-    font-size: 15px;
+    font-size: 14.5px;
   }
 }
 
