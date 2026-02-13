@@ -95,6 +95,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* TESTE - SE VOCÊ VER ISSO, O DEPLOY FUNCIONOU! */}
+      <div className="bg-yellow-400 text-black text-center py-6 text-2xl font-black">
+        🚀 DEPLOY FUNCIONOU! CÓDIGO NOVO ATIVO! 🚀
+      </div>
       <PromoBanner />
       
       {/* Hero Section - Compacto */}
