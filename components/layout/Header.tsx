@@ -112,6 +112,7 @@ export function Header() {
                     src="/logo.png" 
                     alt="Barato D+" 
                     fill
+                    sizes="(max-width: 768px) 56px, 64px"
                     className="object-contain drop-shadow-md"
                     priority
                   />

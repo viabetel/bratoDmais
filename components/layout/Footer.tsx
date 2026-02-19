@@ -65,6 +65,7 @@ export function Footer() {
                   src="/logo.png" 
                   alt="Barato D+" 
                   fill
+                  sizes="48px"
                   className="object-contain"
                 />
               </div>
