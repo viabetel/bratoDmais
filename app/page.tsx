@@ -6,7 +6,7 @@ import {
   ArrowRight, Truck, Shield, CreditCard, Zap, 
   TrendingUp, Package, Clock, ChevronRight, Flame,
   Sparkles, Gift, MapPin, Headphones, 
-  Refrigerator, Microwave, Washer,
+  Refrigerator, Microwave, Droplets,
   Star, Award, Headset, Banknote
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -218,7 +218,7 @@ export default function Home() {
             <CategoryCard 
               title="Máquinas de Lavar" 
               href="/c/maquinas-lavar" 
-              Icon={Washer}
+              Icon={Droplets}
               bgGradient="bg-gradient-to-br from-teal-500 to-teal-600"
               description="Limpeza perfeita"
             />
@@ -339,7 +339,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <Washer className="w-6 h-6 text-teal-600" />
+                  <Droplets className="w-6 h-6 text-teal-600" />
                   <h2 className="text-3xl font-black text-gray-900">Máquinas de Lavar</h2>
                 </div>
                 <p className="text-gray-600 text-sm">Limpeza perfeita com durabilidade garantida</p>
