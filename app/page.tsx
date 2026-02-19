@@ -6,7 +6,7 @@ import {
   ArrowRight, Truck, Shield, CreditCard, Zap, 
   TrendingUp, Package, Clock, ChevronRight, Flame,
   Sparkles, Gift, MapPin, Headphones, 
-  Refrigerator, Stove, Microwave, Washer,
+  Refrigerator, Microwave, Washer,
   Star, Award, Headset, Banknote
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -204,7 +204,7 @@ export default function Home() {
             <CategoryCard 
               title="Fogões" 
               href="/c/fogoes" 
-              Icon={Stove}
+              Icon={Flame}
               bgGradient="bg-gradient-to-br from-orange-500 to-orange-600"
               description="Cozinhe com eficiência"
             />
@@ -285,7 +285,7 @@ export default function Home() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <Stove className="w-6 h-6 text-orange-600" />
+                  <Flame className="w-6 h-6 text-orange-600" />
                   <h2 className="text-3xl font-black text-gray-900">Fogões e Cooktops</h2>
                 </div>
                 <p className="text-gray-600 text-sm">Cozinhe com estilo, tecnologia e segurança</p>
