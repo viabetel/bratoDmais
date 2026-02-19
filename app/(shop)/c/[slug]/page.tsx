@@ -20,7 +20,18 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const [filterCondition, setFilterCondition] = useState<string | null>(null)
   const [filterPrice, setFilterPrice] = useState({ min: 0, max: 10000 })
 
-  const categoryData = categories.find((c) => c.slug === slug)
+  // Procura pela categoria ou subcategoria
+  let categoryData = categories.find((c) => c.slug === slug)
+  if (!categoryData) {
+    // Se não encontrou na raiz, procura nas subcategorias
+    for (const cat of categories) {
+      const subcat = cat.subcategories?.find((s) => s.slug === slug)
+      if (subcat) {
+        categoryData = subcat
+        break
+      }
+    }
+  }
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => p.categorySlug === slug)
