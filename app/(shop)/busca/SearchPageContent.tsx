@@ -88,7 +88,7 @@ export default function SearchPageContent() {
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-6 md:py-8">
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
@@ -235,9 +235,6 @@ export default function SearchPageContent() {
   )
 }
 
-  return (
-    <main className="min-h-screen bg-muted/30">
-      <div className="container mx-auto px-4 py-6 md:py-8">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
