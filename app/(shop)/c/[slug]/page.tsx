@@ -52,11 +52,30 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
   if (!categoryData) {
     return (
-      <main className="container mx-auto px-4 py-8 text-center">
-        <h1 className="text-2xl font-bold mb-4">Categoria não encontrada</h1>
-        <Link href="/busca">
-          <Button>Voltar à Busca</Button>
-        </Link>
+      <main className="container mx-auto px-4 py-12">
+        <div className="text-center max-w-2xl mx-auto">
+          <h1 className="text-4xl font-black text-gray-900 mb-4">Categoria não encontrada</h1>
+          <p className="text-gray-600 text-lg mb-8">A categoria que você está procurando não existe. Confira nossas categorias principais:</p>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+            {categories.slice(0, 6).map((cat) => (
+              <Link
+                key={cat.id}
+                href={`/c/${cat.slug}`}
+                className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg hover:shadow-lg transition-all hover:scale-105 border border-blue-200"
+              >
+                <span className="block text-lg font-bold text-blue-600 mb-1">{cat.name}</span>
+                <span className="text-xs text-gray-600">{cat.description?.slice(0, 40)}</span>
+              </Link>
+            ))}
+          </div>
+          
+          <Link href="/busca">
+            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+              Ver Todos os Produtos
+            </Button>
+          </Link>
+        </div>
       </main>
     )
   }

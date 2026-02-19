@@ -54,14 +54,14 @@ function CategoryCard({
 }: CategoryCardProps) {
   return (
     <Link href={href}>
-      <div className={`${bgGradient} rounded-2xl p-6 text-white cursor-pointer transition-all hover:shadow-xl hover:scale-105 group`}>
-        <div className="mb-3 inline-block p-3 bg-white/20 rounded-lg group-hover:bg-white/30 transition">
-          <Icon className="w-8 h-8" />
+      <div className={`${bgGradient} rounded-xl p-4 text-white cursor-pointer transition-all hover:shadow-lg hover:scale-102 group border border-white/20`}>
+        <div className="mb-2 inline-block p-2 bg-white/15 rounded-lg group-hover:bg-white/25 transition">
+          <Icon className="w-6 h-6" />
         </div>
-        <h3 className="font-black text-lg mb-1">{title}</h3>
-        <p className="text-xs text-white/80">{description}</p>
-        <div className="mt-3 flex items-center gap-1 text-sm font-semibold opacity-0 group-hover:opacity-100 transition">
-          Ver mais <ArrowRight className="w-4 h-4" />
+        <h3 className="font-bold text-sm mb-0.5">{title}</h3>
+        <p className="text-xs text-white/70">{description}</p>
+        <div className="mt-2 flex items-center gap-1 text-xs font-semibold opacity-0 group-hover:opacity-100 transition">
+          Ver <ArrowRight className="w-3 h-3" />
         </div>
       </div>
     </Link>
@@ -112,68 +112,68 @@ export default function Home() {
         <div className="absolute top-5 left-5 w-48 h-48 bg-yellow-400/20 rounded-full blur-3xl"></div>
         <div className="absolute bottom-5 right-5 w-64 h-64 bg-yellow-300/10 rounded-full blur-3xl"></div>
         
-        <div className="container mx-auto px-4 py-8 md:py-12 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-6 items-center">
-            <div className="text-white space-y-4">
-              <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-900 px-3 py-1.5 rounded-full text-xs font-bold">
+        <div className="container mx-auto px-4 py-6 md:py-8 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-4 items-center">
+            <div className="text-white space-y-3">
+              <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold">
                 <Sparkles className="w-3 h-3" />
                 QUALIDADE GARANTIDA
               </div>
               
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-black leading-tight">
                 Sua Casa Merece o Melhor
                 <span className="block text-yellow-300">Até 80% de Desconto</span>
               </h1>
               
-              <p className="text-sm md:text-base text-blue-100 max-w-md leading-relaxed">
-                Compre eletrodomésticos de qualidade com segurança. {siteConfig.payment.maxInstallments}x sem juros, {siteConfig.payment.pixDiscount}% OFF no Pix e garantia de 12 meses em todos os produtos.
+              <p className="text-xs md:text-sm text-blue-100 max-w-md leading-relaxed">
+                Compre eletrodomésticos de qualidade com segurança. {siteConfig.payment.maxInstallments}x sem juros, {siteConfig.payment.pixDiscount}% OFF no Pix e garantia de 12 meses.
               </p>
               
-              <div className="flex gap-2.5 pt-2">
+              <div className="flex gap-2 pt-1">
                 <Link href="/busca?sort=discount">
-                  <Button className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold text-sm px-6 py-5 shadow-lg rounded-lg group">
-                    <Zap className="w-4 h-4 mr-2" />
+                  <Button className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold text-xs px-5 py-4 shadow-lg rounded-lg group">
+                    <Zap className="w-4 h-4 mr-1.5" />
                     VER OFERTAS
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 transition-transform" />
+                    <ArrowRight className="w-3 h-3 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
                   </Button>
                 </Link>
                 <Link href="/busca">
-                  <Button className="bg-white hover:bg-gray-100 text-blue-700 font-bold text-sm px-6 py-5 rounded-lg">
-                    Explorar Catálogo
+                  <Button className="bg-white hover:bg-gray-100 text-blue-700 font-bold text-xs px-5 py-4 rounded-lg">
+                    Explorar
                   </Button>
                 </Link>
               </div>
             </div>
             
             {/* Benefits Grid */}
-            <div className="grid grid-cols-2 gap-3">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-white border border-white/20 hover:bg-white/15 transition">
-                <div className="bg-yellow-400/20 w-10 h-10 rounded-lg flex items-center justify-center mb-2">
-                  <Truck className="w-6 h-6 text-yellow-300" />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-white border border-white/20 hover:bg-white/15 transition">
+                <div className="bg-yellow-400/20 w-9 h-9 rounded-lg flex items-center justify-center mb-1.5">
+                  <Truck className="w-5 h-5 text-yellow-300" />
                 </div>
-                <h3 className="font-bold text-sm">Frete Grátis</h3>
-                <p className="text-xs text-blue-200 mt-1">Acima de {formatCurrency(siteConfig.shipping.freeShippingMinimum)}</p>
+                <h3 className="font-bold text-xs">Frete Grátis</h3>
+                <p className="text-[11px] text-blue-200 mt-0.5">{formatCurrency(siteConfig.shipping.freeShippingMinimum)}+</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-white border border-white/20 hover:bg-white/15 transition">
-                <div className="bg-green-400/20 w-10 h-10 rounded-lg flex items-center justify-center mb-2">
-                  <Award className="w-6 h-6 text-green-300" />
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-white border border-white/20 hover:bg-white/15 transition">
+                <div className="bg-green-400/20 w-9 h-9 rounded-lg flex items-center justify-center mb-1.5">
+                  <Award className="w-5 h-5 text-green-300" />
                 </div>
-                <h3 className="font-bold text-sm">12 Meses</h3>
-                <p className="text-xs text-blue-200 mt-1">Garantia total</p>
+                <h3 className="font-bold text-xs">12 Meses</h3>
+                <p className="text-[11px] text-blue-200 mt-0.5">Garantia</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-white border border-white/20 hover:bg-white/15 transition">
-                <div className="bg-blue-300/20 w-10 h-10 rounded-lg flex items-center justify-center mb-2">
-                  <CreditCard className="w-6 h-6 text-blue-200" />
+              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 text-white border border-white/20 hover:bg-white/15 transition">
+                <div className="bg-blue-300/20 w-9 h-9 rounded-lg flex items-center justify-center mb-1.5">
+                  <CreditCard className="w-5 h-5 text-blue-200" />
                 </div>
-                <h3 className="font-bold text-sm">Até 6x</h3>
-                <p className="text-xs text-blue-200 mt-1">Sem juros</p>
+                <h3 className="font-bold text-xs">Até 6x</h3>
+                <p className="text-[11px] text-blue-200 mt-0.5">Sem juros</p>
               </div>
-              <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg p-4 text-blue-900 shadow-lg hover:shadow-xl transition">
-                <div className="bg-yellow-300/40 w-10 h-10 rounded-lg flex items-center justify-center mb-2">
-                  <Banknote className="w-6 h-6" />
+              <div className="bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg p-3 text-blue-900 shadow-lg hover:shadow-xl transition">
+                <div className="bg-yellow-300/40 w-9 h-9 rounded-lg flex items-center justify-center mb-1.5">
+                  <Banknote className="w-5 h-5" />
                 </div>
-                <h3 className="font-bold text-sm">10% OFF</h3>
-                <p className="text-xs font-semibold mt-1">Pagamento Pix</p>
+                <h3 className="font-bold text-xs">10% OFF</h3>
+                <p className="text-[11px] font-semibold mt-0.5">Pix</p>
               </div>
             </div>
           </div>
@@ -187,13 +187,13 @@ export default function Home() {
       </section>
 
       {/* Categorias Principais - Cards com Ícones Profissionais */}
-      <section className="py-8 bg-white">
+      <section className="py-5 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-black text-gray-900">Encontre o Que Precisa</h2>
-            <p className="text-gray-500 text-sm mt-2">Navegue pelas principais categorias de produtos</p>
+          <div className="text-center mb-5">
+            <h2 className="text-2xl font-black text-gray-900">Encontre o Que Precisa</h2>
+            <p className="text-gray-500 text-xs mt-1">Principais categorias de produtos</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <CategoryCard 
               title="Geladeiras" 
               href="/c/geladeiras" 
@@ -227,23 +227,23 @@ export default function Home() {
       </section>
 
       {/* Ofertas da Semana */}
-      <section className="py-8 bg-gray-50">
+      <section className="py-4 bg-gray-50">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-5">
             <div>
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-1">
                 <Flame className="w-5 h-5 text-red-600" />
-                <h2 className="text-3xl font-black text-gray-900">Ofertas Imperdíveis</h2>
+                <h2 className="text-2xl font-black text-gray-900">Ofertas Imperdíveis</h2>
               </div>
-              <p className="text-gray-500 text-sm">Descontos especiais que você não pode perder</p>
+              <p className="text-gray-500 text-xs">Descontos especiais</p>
             </div>
             <Link href="/busca?sort=discount">
-              <Button className="bg-red-500 hover:bg-red-600 text-white font-bold text-sm px-6 py-2 rounded-lg">
-                Ver Todas <ArrowRight className="w-4 h-4 ml-1" />
+              <Button className="bg-red-500 hover:bg-red-600 text-white font-bold text-xs px-4 py-2 rounded-lg">
+                Ver Todas <ArrowRight className="w-3 h-3 ml-1" />
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {ofertasDaSemana.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -253,23 +253,23 @@ export default function Home() {
 
       {/* Geladeiras Section */}
       {geladeiras.length > 0 && (
-        <section className="py-8 bg-gradient-to-br from-blue-50 via-blue-50 to-cyan-50">
+        <section className="py-4 bg-gradient-to-br from-blue-50 via-blue-50 to-cyan-50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Refrigerator className="w-6 h-6 text-blue-600" />
-                  <h2 className="text-3xl font-black text-gray-900">Geladeiras & Freezers</h2>
+                <div className="flex items-center gap-2 mb-1">
+                  <Refrigerator className="w-5 h-5 text-blue-600" />
+                  <h2 className="text-xl font-black text-gray-900">Geladeiras & Freezers</h2>
                 </div>
-                <p className="text-gray-600 text-sm">Conservação inteligente com eficiência energética</p>
+                <p className="text-gray-600 text-xs">Conservação inteligente</p>
               </div>
               <Link href="/c/geladeiras">
-                <Button variant="outline" className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold text-sm px-6 py-2 rounded-lg">
-                  Ver Todas <ArrowRight className="w-4 h-4 ml-1" />
+                <Button variant="outline" className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold text-xs px-4 py-1.5 rounded-lg">
+                  Ver Todas <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {geladeiras.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -280,23 +280,23 @@ export default function Home() {
 
       {/* Fogões Section */}
       {fogoes.length > 0 && (
-        <section className="py-8 bg-gradient-to-br from-orange-50 via-orange-50 to-amber-50">
+        <section className="py-4 bg-gradient-to-br from-orange-50 via-orange-50 to-amber-50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Flame className="w-6 h-6 text-orange-600" />
-                  <h2 className="text-3xl font-black text-gray-900">Fogões e Cooktops</h2>
+                <div className="flex items-center gap-2 mb-1">
+                  <Flame className="w-5 h-5 text-orange-600" />
+                  <h2 className="text-xl font-black text-gray-900">Fogões e Cooktops</h2>
                 </div>
-                <p className="text-gray-600 text-sm">Cozinhe com estilo, tecnologia e segurança</p>
+                <p className="text-gray-600 text-xs">Cozinhe com estilo e segurança</p>
               </div>
               <Link href="/c/fogoes">
-                <Button variant="outline" className="border-2 border-orange-500 text-orange-600 hover:bg-orange-50 font-bold text-sm px-6 py-2 rounded-lg">
-                  Ver Todos <ArrowRight className="w-4 h-4 ml-1" />
+                <Button variant="outline" className="border-2 border-orange-500 text-orange-600 hover:bg-orange-50 font-bold text-xs px-4 py-1.5 rounded-lg">
+                  Ver Todos <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {fogoes.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -307,19 +307,19 @@ export default function Home() {
 
       {/* Micro-ondas Section */}
       {microondas.length > 0 && (
-        <section className="py-8 bg-gradient-to-br from-purple-50 via-purple-50 to-pink-50">
+        <section className="py-4 bg-gradient-to-br from-purple-50 via-purple-50 to-pink-50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Microwave className="w-6 h-6 text-purple-600" />
-                  <h2 className="text-3xl font-black text-gray-900">Micro-ondas</h2>
+                <div className="flex items-center gap-2 mb-1">
+                  <Microwave className="w-5 h-5 text-purple-600" />
+                  <h2 className="text-xl font-black text-gray-900">Micro-ondas</h2>
                 </div>
-                <p className="text-gray-600 text-sm">Aquecimento rápido com potência e precisão</p>
+                <p className="text-gray-600 text-xs">Aquecimento rápido e preciso</p>
               </div>
               <Link href="/c/microondas">
-                <Button variant="outline" className="border-2 border-purple-500 text-purple-600 hover:bg-purple-50 font-bold text-sm px-6 py-2 rounded-lg">
-                  Ver Todos <ArrowRight className="w-4 h-4 ml-1" />
+                <Button variant="outline" className="border-2 border-purple-500 text-purple-600 hover:bg-purple-50 font-bold text-xs px-4 py-1.5 rounded-lg">
+                  Ver Todos <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </Link>
             </div>
@@ -334,19 +334,19 @@ export default function Home() {
 
       {/* Máquinas de Lavar Section */}
       {lavadoras.length > 0 && (
-        <section className="py-8 bg-gradient-to-br from-teal-50 via-teal-50 to-cyan-50">
+        <section className="py-4 bg-gradient-to-br from-teal-50 via-teal-50 to-cyan-50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-5">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Droplets className="w-6 h-6 text-teal-600" />
-                  <h2 className="text-3xl font-black text-gray-900">Máquinas de Lavar</h2>
+                <div className="flex items-center gap-2 mb-1">
+                  <Droplets className="w-5 h-5 text-teal-600" />
+                  <h2 className="text-xl font-black text-gray-900">Máquinas de Lavar</h2>
                 </div>
-                <p className="text-gray-600 text-sm">Limpeza perfeita com durabilidade garantida</p>
+                <p className="text-gray-600 text-xs">Limpeza perfeita e durável</p>
               </div>
               <Link href="/c/maquinas-lavar">
-                <Button variant="outline" className="border-2 border-teal-500 text-teal-600 hover:bg-teal-50 font-bold text-sm px-6 py-2 rounded-lg">
-                  Ver Todos <ArrowRight className="w-4 h-4 ml-1" />
+                <Button variant="outline" className="border-2 border-teal-500 text-teal-600 hover:bg-teal-50 font-bold text-xs px-4 py-1.5 rounded-lg">
+                  Ver Todos <ArrowRight className="w-3 h-3 ml-1" />
                 </Button>
               </Link>
             </div>
@@ -360,19 +360,19 @@ export default function Home() {
       )}
 
       {/* Mais Vendidos */}
-      <section className="py-8 bg-white">
+      <section className="py-4 bg-white">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-between mb-5">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Star className="w-6 h-6 text-yellow-500" />
-                <h2 className="text-3xl font-black text-gray-900">Mais Vendidos</h2>
+              <div className="flex items-center gap-2 mb-1">
+                <Star className="w-5 h-5 text-yellow-500" />
+                <h2 className="text-xl font-black text-gray-900">Mais Vendidos</h2>
               </div>
-              <p className="text-gray-500 text-sm">Escolhidos pelos nossos clientes</p>
+              <p className="text-gray-500 text-xs">Escolhidos pelos clientes</p>
             </div>
             <Link href="/busca?sort=rating">
-              <Button variant="outline" className="border-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 font-bold text-sm px-6 py-2 rounded-lg">
-                Ver Todos <ArrowRight className="w-4 h-4 ml-1" />
+              <Button variant="outline" className="border-2 border-yellow-400 text-yellow-600 hover:bg-yellow-50 font-bold text-xs px-4 py-1.5 rounded-lg">
+                Ver Todos <ArrowRight className="w-3 h-3 ml-1" />
               </Button>
             </Link>
           </div>
@@ -385,9 +385,9 @@ export default function Home() {
       </section>
 
       {/* Trust Section - Por Que Escolher a Barato D+ */}
-      <section className="py-10 bg-gray-100 border-t border-gray-200">
+      <section className="py-6 bg-gray-100 border-t border-gray-200">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-black text-center text-gray-900 mb-10">
+          <h2 className="text-2xl font-black text-center text-gray-900 mb-6">
             Por Que Escolher <span className="text-blue-600">{siteConfig.name}</span>?
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -427,10 +427,10 @@ export default function Home() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-10 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-black mb-3">Encontre o Produto Perfeito</h2>
-          <p className="text-blue-100 mb-6 max-w-md mx-auto text-base">Explore nosso catálogo completo com dezenas de marcas líderes e ofertas exclusivas</p>
+          <h2 className="text-2xl md:text-3xl font-black mb-2">Encontre o Produto Perfeito</h2>
+          <p className="text-blue-100 mb-5 max-w-md mx-auto text-sm">Explore nosso catálogo completo com dezenas de marcas líderes</p>
           <Link href="/busca">
             <Button className="bg-yellow-400 hover:bg-yellow-500 text-blue-900 font-bold text-base px-8 py-3 rounded-lg shadow-lg">
               Explorar Catálogo <ArrowRight className="w-5 h-5 ml-2" />
