@@ -53,6 +53,7 @@ export const products: Product[] = [
     name: 'Geladeira Consul Frost Free 405L Inox Inverse',
     brand: 'Consul',
     category: 'geladeiras',
+    categorySlug: 'geladeiras',
     price: 2899,
     originalPrice: 3899,
     rating: 4.7,
