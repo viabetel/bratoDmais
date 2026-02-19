@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { 
   ArrowRight, Truck, Shield, CreditCard, Zap, 
   TrendingUp, Package, Clock, ChevronRight, Flame,
-  Sparkles, Gift, MapPin, Headphones, 
+  Sparkles, Gift,
   Refrigerator, Microwave, Droplets,
   Star, Award, Headset, Banknote
 } from 'lucide-react'
