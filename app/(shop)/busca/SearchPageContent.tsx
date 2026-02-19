@@ -6,14 +6,12 @@ import { useSearchParams } from 'next/navigation'
 import { 
   Grid3x3, 
   List, 
-  SlidersHorizontal, 
-  X, 
-  ChevronDown,
-  Search,
+  Menu,
   Package
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/products/ProductCard'
+import { ProfessionalFilterSidebar, FiltersState } from '@/components/filters/ProfessionalFilterSidebar'
 import { products } from '@/data/products'
 
 export default function SearchPageContent() {
@@ -21,14 +19,21 @@ export default function SearchPageContent() {
   const query = searchParams.get('q') || ''
   const [layout, setLayout] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('relevancia')
-  const [filterBrand, setFilterBrand] = useState<string | null>(null)
-  const [filterCondition, setFilterCondition] = useState<string | null>(null)
-  const [filterFreeShipping, setFilterFreeShipping] = useState(false)
-  const [showFilters, setShowFilters] = useState(false)
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000])
+  const [filterSidebarOpen, setFilterSidebarOpen] = useState(false)
+  const [filters, setFilters] = useState<FiltersState>({
+    priceMin: 0,
+    priceMax: 10000,
+    brands: [],
+    condition: [],
+    categories: [],
+    inStock: false,
+    rating: 0,
+    freeShipping: false,
+  })
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => {
+      // Filtro de busca por texto
       const matchQuery =
         query === '' ||
         p.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -36,14 +41,33 @@ export default function SearchPageContent() {
         p.description?.toLowerCase().includes(query.toLowerCase()) ||
         p.tags.some((tag) => tag.toLowerCase().includes(query.toLowerCase()))
 
-      const matchBrand = !filterBrand || p.brand === filterBrand
-      const matchCondition = !filterCondition || p.condition === filterCondition
-      const matchFreeShipping = !filterFreeShipping || p.freeShipping
-      const matchPrice = p.price >= priceRange[0] && p.price <= priceRange[1]
+      if (!matchQuery) return false
 
-      return matchQuery && matchBrand && matchCondition && matchFreeShipping && matchPrice
+      // Filtro de categorias
+      if (filters.categories.length > 0 && !filters.categories.includes(p.categorySlug)) return false
+      
+      // Filtro de marcas
+      if (filters.brands.length > 0 && !filters.brands.includes(p.brand)) return false
+      
+      // Filtro de condição
+      if (filters.condition.length > 0 && !filters.condition.includes(p.condition)) return false
+      
+      // Filtro de preço
+      if (p.price < filters.priceMin || p.price > filters.priceMax) return false
+      
+      // Filtro de estoque
+      if (filters.inStock && p.stock === 0) return false
+      
+      // Filtro de frete grátis
+      if (filters.freeShipping && p.freeShipping !== true) return false
+      
+      // Filtro de avaliação
+      if (filters.rating > 0 && p.rating < filters.rating) return false
+      
+      return true
     })
 
+    // Ordenação
     switch (sortBy) {
       case 'maior-preco':
         return result.sort((a, b) => b.price - a.price)
@@ -60,23 +84,156 @@ export default function SearchPageContent() {
       default:
         return result
     }
-  }, [query, filterBrand, filterCondition, filterFreeShipping, priceRange, sortBy])
+  }, [query, filters, sortBy])
 
-  const brands = [...new Set(products.map((p) => p.brand))].sort()
-  const conditions = [
-    { value: 'novo', label: 'Novo' },
-    { value: 'reembalado', label: 'Reembalado' },
-    { value: 'remanufaturado', label: 'Remanufaturado' },
-  ]
+  return (
+    <main className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-6 md:py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-gray-900">Busca</span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-black text-gray-900">
+                {query ? `Resultados para "${query}"` : 'Todos os Produtos'}
+              </h1>
+              <p className="text-gray-600 mt-2">
+                {filteredProducts.length} {filteredProducts.length === 1 ? 'produto encontrado' : 'produtos encontrados'}
+              </p>
+            </div>
+            
+            {/* Mobile Filter Toggle */}
+            <Button
+              variant="outline"
+              className="lg:hidden"
+              onClick={() => setFilterSidebarOpen(!filterSidebarOpen)}
+            >
+              <Menu className="w-4 h-4 mr-2" />
+              Filtros
+            </Button>
+          </div>
+        </div>
 
-  const activeFiltersCount = [filterBrand, filterCondition, filterFreeShipping].filter(Boolean).length
+        <div className="flex gap-6">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block w-72 flex-shrink-0">
+            <ProfessionalFilterSidebar
+              onFiltersChange={setFilters}
+              isOpen={true}
+            />
+          </div>
 
-  const clearAllFilters = () => {
-    setFilterBrand(null)
-    setFilterCondition(null)
-    setFilterFreeShipping(false)
-    setPriceRange([0, 10000])
-  }
+          {/* Mobile Filter Drawer */}
+          {filterSidebarOpen && (
+            <>
+              <div
+                className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+                onClick={() => setFilterSidebarOpen(false)}
+              />
+              <div className="fixed inset-y-0 left-0 w-80 bg-white z-40 lg:hidden overflow-y-auto">
+                <ProfessionalFilterSidebar
+                  onFiltersChange={setFilters}
+                  isOpen={filterSidebarOpen}
+                  onClose={() => setFilterSidebarOpen(false)}
+                />
+              </div>
+            </>
+          )}
+
+          {/* Products Section */}
+          <div className="w-full flex-1 space-y-6">
+            {/* Toolbar */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-gray-200 gap-4">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <span className="text-sm text-gray-600 whitespace-nowrap">Ordenar por:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white flex-1 sm:flex-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="relevancia">Relevância</option>
+                  <option value="menor-preco">Menor Preço</option>
+                  <option value="maior-preco">Maior Preço</option>
+                  <option value="maior-desconto">Maior Desconto</option>
+                  <option value="melhor-avaliacao">Melhor Avaliação</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 ml-auto">
+                <Button
+                  size="sm"
+                  variant={layout === 'grid' ? 'default' : 'outline'}
+                  onClick={() => setLayout('grid')}
+                  className="px-2"
+                >
+                  <Grid3x3 className="w-4 h-4" />
+                </Button>
+                <Button
+                  size="sm"
+                  variant={layout === 'list' ? 'default' : 'outline'}
+                  onClick={() => setLayout('list')}
+                  className="px-2"
+                >
+                  <List className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Products Grid/List */}
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-12">
+                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 mb-6 text-lg">
+                  {query 
+                    ? `Nenhum produto encontrado para "${query}"`
+                    : 'Nenhum produto encontrado'
+                  }
+                </p>
+                <Button
+                  onClick={() =>
+                    setFilters({
+                      priceMin: 0,
+                      priceMax: 10000,
+                      brands: [],
+                      condition: [],
+                      categories: [],
+                      inStock: false,
+                      rating: 0,
+                      freeShipping: false,
+                    })
+                  }
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Limpar Filtros
+                </Button>
+              </div>
+            ) : (
+              <div
+                className={
+                  layout === 'grid'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
+                    : 'space-y-4'
+                }
+              >
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    variant={layout === 'list' ? 'list' : 'grid'}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </main>
+  )
+}
 
   return (
     <main className="min-h-screen bg-muted/30">
