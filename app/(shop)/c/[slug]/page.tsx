@@ -2,6 +2,7 @@
 
 import { useState, useMemo, use } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Grid3x3, List, SlidersHorizontal, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/products/ProductCard'
@@ -9,9 +10,10 @@ import {
   ProfessionalFilterSidebar,
   FiltersState,
 } from '@/components/filters/ProfessionalFilterSidebar'
+import { ServiceModeSelector, type ServiceMode } from '@/components/services/ServiceModeSelector'
 import { products } from '@/data/products'
 import { categories } from '@/data/categories'
-import { getCategoryBySlug } from '@/lib/utils/categories'
+import { getCategoryBySlug, getSubcategorySlugs } from '@/lib/utils/categories'
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>
@@ -19,6 +21,13 @@ interface CategoryPageProps {
 
 export default function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = use(params)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  
+  // Get mode from URL or default to 'buy'
+  const modeParam = searchParams.get('mode') as ServiceMode | null
+  const [mode, setMode] = useState<ServiceMode>(modeParam || 'buy')
+  
   const [layout, setLayout] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('relevancia')
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -33,11 +42,22 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     freeShipping: false,
   })
 
+  const handleModeChange = (newMode: ServiceMode) => {
+    setMode(newMode)
+    // Update URL with mode query param
+    const params = new URLSearchParams(searchParams)
+    params.set('mode', newMode)
+    router.push(`?${params.toString()}`)
+  }
+
   const categoryData = getCategoryBySlug(slug)
+  const applicableSubcategorySlugs = getSubcategorySlugs(slug)
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => {
-      if (!filters.categories.includes(p.categorySlug)) return false
+      // If viewing a parent category, check if product's category is in its subcategories
+      // If viewing a leaf category, check exact match
+      if (!applicableSubcategorySlugs.includes(p.categorySlug)) return false
       if (filters.brands.length > 0 && !filters.brands.includes(p.brand)) return false
       if (filters.condition.length > 0 && !filters.condition.includes(p.condition)) return false
       if (p.price < filters.priceMin || p.price > filters.priceMax) return false
@@ -63,7 +83,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       default:
         return result
     }
-  }, [filters, sortBy])
+  }, [filters, sortBy, applicableSubcategorySlugs])
 
   if (!categoryData) {
     return (
