@@ -197,100 +197,49 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
     )
   }
 
-  // Grid variant (default)
+  // Grid variant (default) - COMPACT
   return (
     <Link href={`/p/${product.slug}`}>
-      <div className="group bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl hover:border-blue-300 transition-all duration-300 h-full flex flex-col">
+      <div className="group bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-300 h-full flex flex-col">
         {/* Image Container */}
         <div className="relative bg-gray-50 aspect-square overflow-hidden">
           <img 
             src={imageUrl} 
             alt={product.name} 
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
           />
           
           {/* Top Left Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
+          <div className="absolute top-2 left-2 flex flex-col gap-1">
             {discountPercent > 0 && (
-              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
-                -{discountPercent}% OFF
+              <span className="bg-red-500 text-white px-2 py-0.5 rounded text-xs font-bold shadow-sm">
+                -{discountPercent}%
               </span>
             )}
             {product.freeShipping && (
-              <span className="bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
+              <span className="bg-green-500 text-white px-2 py-0.5 rounded text-xs font-bold shadow-sm flex items-center gap-0.5">
                 <Truck className="w-3 h-3" />
-                Frete Grátis
+                Grátis
               </span>
             )}
-            {product.stock > 0 && product.stock <= 5 && (
-              <span className="bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
-                Últimas {product.stock}!
-              </span>
-            )}
-          </div>
-          
-          {/* Action Buttons - Top Right */}
-          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <button
-              onClick={handleToggleFavorite}
-              className={`p-2 rounded-full backdrop-blur-sm transition-all shadow-sm ${
-                isFavorite 
-                  ? 'bg-red-500 text-white' 
-                  : 'bg-white hover:bg-red-50 text-gray-600 hover:text-red-500'
-              }`}
-              aria-label={isFavorite ? 'Remover de favoritos' : 'Adicionar aos favoritos'}
-              title={isFavorite ? 'Remover de favoritos' : 'Adicionar aos favoritos'}
-            >
-              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} aria-hidden="true" />
-            </button>
-            
-            <button
-              onClick={handleShare}
-              className="p-2 bg-white hover:bg-blue-50 text-gray-600 hover:text-blue-600 rounded-full backdrop-blur-sm transition-all shadow-sm"
-              aria-label="Compartilhar produto"
-              title="Compartilhar"
-            >
-              <Share2 className="w-5 h-5" aria-hidden="true" />
-            </button>
-            
-            <button
-              onClick={handleToggleCompare}
-              className={`p-2 rounded-full backdrop-blur-sm transition-all shadow-sm ${
-                isComparing 
-                  ? 'bg-purple-500 text-white' 
-                  : 'bg-white hover:bg-purple-50 text-gray-600 hover:text-purple-600'
-              }`}
-              aria-label={isComparing ? 'Remover de comparação' : 'Adicionar à comparação'}
-              title={isComparing ? 'Remover de comparação' : 'Adicionar à comparação'}
-            >
-              <BarChart3 className="w-5 h-5" aria-hidden="true" />
-            </button>
-          </div>
-
-          {/* Quick View - Bottom Center (on hover) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-4">
-            <span className="bg-white text-gray-900 px-6 py-2.5 rounded-full text-sm font-bold shadow-lg flex items-center gap-2 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-              <Eye className="w-4 h-4" />
-              Ver Detalhes
-            </span>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-4 flex-1 flex flex-col">
-          <p className="text-xs text-blue-600 font-bold mb-1.5 uppercase tracking-widest">{product.brand}</p>
-          <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-3 min-h-[2rem]">
+        <div className="p-3 flex-1 flex flex-col">
+          <p className="text-xs text-blue-600 font-bold mb-1 uppercase tracking-wide">{product.brand}</p>
+          <h3 className="font-semibold text-gray-900 text-xs line-clamp-2 mb-2 min-h-[1.5rem]">
             {product.name}
           </h3>
 
           {/* Rating */}
-          <div className="flex items-center gap-1.5 text-xs mb-4">
+          <div className="flex items-center gap-1 text-xs mb-2">
             <div className="flex gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-3.5 h-3.5 ${
+                  className={`w-3 h-3 ${
                     i < Math.round(product.rating)
                       ? 'fill-yellow-400 text-yellow-400'
                       : 'text-gray-200'
@@ -298,70 +247,60 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
                 />
               ))}
             </div>
-            <span className="text-gray-600 font-medium">({product.reviews})</span>
+            <span className="text-gray-600 text-xs">({product.reviews})</span>
           </div>
 
-          {/* Stock and Condition */}
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {product.stock > 0 ? (
-              <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded font-semibold">
-                ✓ Em estoque
-              </span>
-            ) : (
-              <span className="bg-red-100 text-red-700 text-xs px-2 py-1 rounded font-semibold">
-                Esgotado
-              </span>
-            )}
-            {product.condition === 'novo' && (
-              <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded font-semibold">
-                Novo
-              </span>
-            )}
-          </div>
+          {/* Stock Badge */}
+          {product.stock > 0 && product.stock <= 5 && (
+            <span className="text-xs text-orange-600 font-semibold mb-2">
+              Últimas {product.stock}!
+            </span>
+          )}
 
           {/* Pricing */}
-          <div className="mt-auto space-y-3 border-t border-gray-100 pt-4">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-black text-gray-900">
+          <div className="mt-auto space-y-2 border-t border-gray-100 pt-2">
+            <div className="flex items-baseline gap-1">
+              <span className="text-lg font-black text-gray-900">
                 {formatBRL(product.price)}
               </span>
-              <span className="text-xs line-through text-gray-400">
-                {formatBRL(product.originalPrice)}
-              </span>
+              {product.originalPrice > product.price && (
+                <span className="text-xs line-through text-gray-400">
+                  {formatBRL(product.originalPrice)}
+                </span>
+              )}
             </div>
             
-            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2.5">
-              <p className="text-xs font-bold text-green-700 mb-0.5">
-                💰 {formatBRL(pixPrice)} no Pix
-              </p>
-              <p className="text-xs text-green-600">
-                Economize {formatBRL(product.price - pixPrice)}
-              </p>
-            </div>
+            {pixPrice < product.price && (
+              <div className="bg-green-50 rounded px-2 py-1.5 text-xs">
+                <p className="font-bold text-green-700">
+                  {formatBRL(pixPrice)} no Pix
+                </p>
+              </div>
+            )}
 
             {/* Add to Cart Button */}
             <button
               onClick={handleAddToCart}
               disabled={product.stock === 0}
-              className={`w-full py-3 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-sm ${
+              className={`w-full py-2 rounded font-bold text-xs flex items-center justify-center gap-1 transition-all duration-200 ${
                 feedback === 'cart'
                   ? 'bg-green-500 text-white'
                   : product.stock === 0
                   ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white active:scale-[0.98]'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95'
               }`}
             >
               {feedback === 'cart' ? (
                 <>
-                  <Check className="w-5 h-5" />
-                  Adicionado ao carrinho!
+                  <Check className="w-4 h-4" />
+                  Adicionado
                 </>
               ) : product.stock === 0 ? (
                 'Indisponível'
               ) : (
                 <>
-                  <ShoppingCart className="w-5 h-5" />
-                  COMPRAR AGORA
+                  <ShoppingCart className="w-4 h-4" />
+                  COMPRAR
                 </>
               )}
             </button>
