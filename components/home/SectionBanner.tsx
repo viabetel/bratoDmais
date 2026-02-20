@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ChevronRight, Flame, TrendingUp, Heart, Tag, Zap } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 
 interface SectionBannerProps {
   badge?: string
@@ -10,7 +10,7 @@ interface SectionBannerProps {
   icon?: React.ReactNode
   href?: string
   gradient?: string
-  animated?: boolean
+  illustration?: React.ReactNode
 }
 
 export function SectionBanner({
@@ -20,135 +20,137 @@ export function SectionBanner({
   icon,
   href,
   gradient = 'from-blue-600 to-indigo-600',
-  animated = true,
+  illustration,
 }: SectionBannerProps) {
-  const bannerContent = (
-    <div className={`relative overflow-hidden rounded-lg bg-gradient-to-r ${gradient} py-6 md:py-8 px-6 md:px-8 shadow-lg ${animated ? 'animate-pulse-subtle' : ''}`}>
-      {/* Animated background elements */}
-      {animated && (
-        <>
-          <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 animate-float" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -ml-16 -mb-16 animate-float-delay" />
-        </>
-      )}
+  return (
+    <div className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${gradient} py-8 md:py-12 px-6 md:px-10 shadow-xl`}>
+      {/* Subtle animated background elements */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-16 -mt-16 opacity-50 animate-pulse" />
+      <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full blur-3xl -ml-20 -mb-20 opacity-30" style={{ animation: 'float-subtle 6s ease-in-out infinite' }} />
 
       {/* Content */}
-      <div className="relative z-10 flex items-center justify-between gap-4">
-        <div className="flex items-start gap-4">
-          {/* Icon */}
+      <div className="relative z-10 flex items-center justify-between gap-8">
+        {/* Left Section */}
+        <div className="flex-1 min-w-0">
+          {badge && (
+            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-3 py-1.5 rounded-full mb-3 border border-white/20 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-xs font-bold text-white uppercase tracking-wide">{badge}</span>
+            </div>
+          )}
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-2 text-balance animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            {title}
+          </h2>
+          {description && (
+            <p className="text-sm md:text-base text-white/85 text-balance max-w-md animate-slide-up" style={{ animationDelay: '0.3s' }}>
+              {description}
+            </p>
+          )}
+        </div>
+
+        {/* Right Section - Icon/Illustration & CTA */}
+        <div className="flex items-end gap-4 flex-shrink-0">
+          {/* Minimalist Icon */}
           {icon && (
-            <div className="flex-shrink-0 p-2.5 bg-white/20 rounded-lg backdrop-blur-sm">
-              {icon}
+            <div className="hidden sm:flex flex-col items-center gap-2 opacity-90 animate-float-icon" style={{ animationDelay: '0.4s' }}>
+              <div className="p-3 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20">
+                {icon}
+              </div>
             </div>
           )}
 
-          {/* Text */}
-          <div>
-            {badge && (
-              <div className="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full mb-2 border border-white/30">
-                <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                <span className="text-xs font-bold text-white uppercase tracking-wide">{badge}</span>
-              </div>
-            )}
-            <h2 className="text-2xl md:text-3xl font-black text-white mb-1 text-balance">
-              {title}
-            </h2>
-            {description && (
-              <p className="text-sm md:text-base text-white/90 text-balance">
-                {description}
-              </p>
-            )}
-          </div>
+          {/* CTA Button */}
+          {href && (
+            <Link href={href}>
+              <button className="flex items-center justify-center gap-2 px-5 py-3 md:px-7 md:py-4 bg-white hover:bg-gray-100 text-gray-900 rounded-xl font-bold text-sm md:text-base transition-all active:scale-95 shadow-lg hover:shadow-xl animate-slide-up" style={{ animationDelay: '0.5s' }}>
+                <span>Ver Tudo</span>
+                <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
+            </Link>
+          )}
         </div>
-
-        {/* CTA */}
-        {href && (
-          <Link href={href} className="flex-shrink-0">
-            <button className="flex items-center justify-center gap-2 px-4 py-2.5 md:px-6 md:py-3 bg-white text-gray-900 rounded-lg font-bold text-sm md:text-base hover:bg-gray-100 transition-all active:scale-95 shadow-lg">
-              Ver Tudo
-              <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
-          </Link>
-        )}
       </div>
 
       {/* CSS Animations */}
       <style jsx>{`
-        @keyframes float {
+        @keyframes float-subtle {
           0%, 100% {
-            transform: translateY(0px) translateX(0px);
+            transform: translateY(0px);
+            opacity: 0.3;
           }
           50% {
-            transform: translateY(-20px) translateX(10px);
+            transform: translateY(-15px);
+            opacity: 0.5;
           }
         }
-        @keyframes float-delay {
+        @keyframes float-icon {
           0%, 100% {
-            transform: translateY(0px) translateX(0px);
+            transform: translateY(0px) rotate(0deg);
           }
           50% {
-            transform: translateY(20px) translateX(-10px);
+            transform: translateY(-8px) rotate(1deg);
           }
         }
-        @keyframes pulse-subtle {
-          0%, 100% {
+        @keyframes slide-up {
+          from {
+            opacity: 0;
+            transform: translateY(12px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
             opacity: 1;
           }
-          50% {
-            opacity: 0.95;
-          }
         }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
+        .animate-slide-up {
+          animation: slide-up 0.6s ease-out forwards;
         }
-        .animate-float-delay {
-          animation: float-delay 8s ease-in-out infinite;
+        .animate-float-icon {
+          animation: float-icon 4s ease-in-out infinite;
         }
-        .animate-pulse-subtle {
-          animation: pulse-subtle 4s ease-in-out infinite;
+        .animate-fade-in {
+          animation: fade-in 0.5s ease-out forwards;
         }
       `}</style>
     </div>
   )
-
-  return bannerContent
 }
 
 // Preset banner variants
 export const bannerVariants = {
   flashDeals: {
     badge: 'OFERTA RELÂMPAGO',
-    title: 'Ofertas Relâmpago',
-    description: 'Produtos com os melhores descontos do momento',
-    icon: <Flame className="w-6 h-6 md:w-7 md:h-7 text-yellow-300" />,
+    title: 'Aproveite Agora',
+    description: 'Produtos com até 80% de desconto',
+    icon: <svg className="w-8 h-8 text-yellow-300" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>,
     gradient: 'from-red-600 to-orange-500',
   },
   bestsellers: {
     badge: 'MAIS VENDIDOS',
-    title: 'Mais Vendidos',
-    description: 'Produtos escolhidos e aprovados por nossos clientes',
-    icon: <TrendingUp className="w-6 h-6 md:w-7 md:h-7 text-emerald-300" />,
+    title: 'Produtos que Vendem',
+    description: 'Escolhas dos nossos clientes',
+    icon: <svg className="w-8 h-8 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 17"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>,
     gradient: 'from-emerald-600 to-teal-600',
-  },
-  favorites: {
-    badge: 'FAVORITOS',
-    title: 'Favoritos da Semana',
-    description: 'Seleção especial para você',
-    icon: <Heart className="w-6 h-6 md:w-7 md:h-7 text-pink-300" />,
-    gradient: 'from-pink-600 to-rose-600',
   },
   priceRanges: {
     badge: 'FAIXA DE PREÇO',
-    title: 'Ofertas por Faixa de Preço',
-    description: 'Encontre produtos no seu orçamento',
-    icon: <Tag className="w-6 h-6 md:w-7 md:h-7 text-purple-300" />,
+    title: 'Produtos por Orçamento',
+    description: 'Encontre no seu preço ideal',
+    icon: <svg className="w-8 h-8 text-purple-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="1"></circle><path d="M12 1v6m0 6v6"></path><path d="M4.22 4.22l4.24 4.24M15.54 15.54l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24M15.54 8.46l4.24-4.24"></path></svg>,
     gradient: 'from-purple-600 to-indigo-600',
   },
-  deals: {
-    badge: 'SUPER PROMOÇÃO',
-    title: 'Super Promoção do Dia',
-    description: 'Aproveite antes que acabem',
-    icon: <Zap className="w-6 h-6 md:w-7 md:h-7 text-yellow-300" />,
-    gradient: 'from-amber-600 to-orange-600',
+  weeklyDeals: {
+    badge: 'PROMOÇÃO DA SEMANA',
+    title: 'Melhores Ofertas',
+    description: 'Atualizado diariamente',
+    icon: <svg className="w-8 h-8 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6v6l4 2"></polyline></svg>,
+    gradient: 'from-blue-600 to-cyan-600',
   },
 }

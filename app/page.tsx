@@ -91,6 +91,7 @@ export default function Home() {
         products={ofertasDaSemana}
         viewMoreHref="/busca?sort=discount"
         badge="flash"
+        hideTitle={true}
       />
 
       {/* Best Sellers Banner */}
@@ -110,6 +111,7 @@ export default function Home() {
         products={maisVendidos}
         viewMoreHref="/busca?sort=rating"
         badge="bestseller"
+        hideTitle={true}
       />
 
       {/* Price Ranges Banner */}
