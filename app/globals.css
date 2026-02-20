@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ========================================
-   ZOOM GLOBAL - Site 80% do tamanho normal
+   ZOOM GLOBAL - Site 85% do tamanho normal
    ======================================== */
 
 /* Container principal com zoom */
@@ -13,26 +13,26 @@ main,
   transform-origin: top center;
 }
 
-/* Reduz tamanho base da fonte (afeta rem/em) */
+/* Reduz tamanho base da fonte para 80% (afeta rem/em) */
 html {
-  font-size: 13px; /* Era 16px, agora ~81% */
+  font-size: 12.8px; /* 80% de 16px = 12.8px */
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 13.5px;
+    font-size: 12.8px;
   }
 }
 
 @media (min-width: 1024px) {
   html {
-    font-size: 14px;
+    font-size: 12.8px;
   }
 }
 
 @media (min-width: 1536px) {
   html {
-    font-size: 14.5px;
+    font-size: 12.8px;
   }
 }
 

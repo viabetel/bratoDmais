@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation'
 import { 
   Search, ShoppingCart, Heart, User, Menu, X, 
   ChevronDown, Truck, Shield, CreditCard, Zap,
-  Phone, MapPin
+  Phone, MapPin, Refrigerator, Flame, Microwave, Droplets,
+  Wind, Home, Tv, Laptop, Smartphone, Package
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/data/categories'
@@ -16,17 +17,23 @@ import { useFavoritesStore } from '@/lib/store/favoritesStore'
 import { useUserStore } from '@/lib/store/userStore'
 import { siteConfig, formatCurrency } from '@/lib/config'
 
-const categoryIcons: Record<string, string> = {
-  'eletronicos': '⚡',
-  'perifericos': '🖱️',
-  'componentes': '🔧',
-  'acessorios': '🎧',
-  'eletrodomesticos': '🏠',
-  'climatizacao': '❄️',
-  'tvs': '📺',
-  'notebooks': '💻',
-  'smartphones': '📱',
-  'utilidades': '🍳',
+// Função para mapear slugs para ícones Lucide
+const getCategoryIcon = (slug: string) => {
+  const iconMap: Record<string, React.ComponentType<{ className: string }>> = {
+    'eletrodomesticos': Refrigerator,
+    'geladeiras': Refrigerator,
+    'fogoes': Flame,
+    'microondas': Microwave,
+    'maquinas-lavar': Droplets,
+    'climatizacao': Wind,
+    'utilidades': Home,
+    'tvs': Tv,
+    'notebooks': Laptop,
+    'smartphones': Smartphone,
+    'eletronicos': Zap,
+  }
+  const Icon = iconMap[slug] || Package
+  return Icon
 }
 
 export function Header() {
@@ -112,6 +119,7 @@ export function Header() {
                     src="/logo.png" 
                     alt="Barato D+" 
                     fill
+                    sizes="(max-width: 768px) 56px, 64px"
                     className="object-contain drop-shadow-md"
                     priority
                   />
@@ -247,7 +255,10 @@ export function Header() {
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group"
                             onClick={() => setMegaMenuOpen(false)}
                           >
-                            <span className="text-2xl">{categoryIcons[category.slug] || '📦'}</span>
+                            {(() => {
+                              const Icon = getCategoryIcon(category.slug)
+                              return <Icon className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                            })()}
                             <div>
                               <span className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors block">
                                 {category.name}
@@ -261,7 +272,10 @@ export function Header() {
                     
                     {/* Banner Lateral */}
                     <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-white">
-                      <h3 className="font-bold text-lg mb-2">🔥 Ofertas Imperdíveis!</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Flame className="w-5 h-5 text-orange-300" />
+                        <h3 className="font-bold text-lg">Ofertas Imperdíveis!</h3>
+                      </div>
                       <p className="text-sm text-blue-100 mb-4">Até 80% de desconto em produtos selecionados</p>
                       <Link 
                         href="/busca?sort=discount"
@@ -368,7 +382,10 @@ export function Header() {
                     className="flex items-center gap-2 p-2.5 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="text-lg">{categoryIcons[cat.slug] || '📦'}</span>
+                    {(() => {
+                      const Icon = getCategoryIcon(cat.slug)
+                      return <Icon className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                    })()}
                     <span className="text-sm font-medium text-gray-700">{cat.name}</span>
                   </Link>
                 ))}
