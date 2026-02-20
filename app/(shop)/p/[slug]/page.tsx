@@ -165,11 +165,11 @@ export default function ProductPage({ params }: ProductPageProps) {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+      <div className="container mx-auto px-4 py-4">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Gallery */}
-          <div className="space-y-4">
-            <div className="bg-white rounded-2xl border-2 border-gray-100 overflow-hidden aspect-square flex items-center justify-center relative group">
+          <div className="space-y-2">
+            <div className="bg-white rounded-lg border border-gray-100 overflow-hidden aspect-square flex items-center justify-center relative group">
               <img 
                 src={imageUrl} 
                 alt={product.name}
@@ -177,81 +177,81 @@ export default function ProductPage({ params }: ProductPageProps) {
               />
               
               {/* Badges */}
-              <div className="absolute top-4 left-4 flex flex-col gap-2">
+              <div className="absolute top-2 left-2 flex flex-col gap-1">
                 {discountPercent > 0 && (
-                  <span className="bg-red-500 text-white px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
+                  <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold shadow-sm">
                     -{discountPercent}% OFF
                   </span>
                 )}
                 {product.freeShipping && (
-                  <span className="bg-green-500 text-white px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg flex items-center gap-1">
-                    <Truck className="w-4 h-4" />
+                  <span className="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold shadow-sm flex items-center gap-0.5">
+                    <Truck className="w-3 h-3" />
                     Frete Grátis
                   </span>
                 )}
                 {product.condition === 'novo' && (
-                  <span className="bg-blue-500 text-white px-3 py-1.5 rounded-xl text-sm font-bold shadow-lg">
+                  <span className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold shadow-sm">
                     Novo
                   </span>
                 )}
               </div>
 
               {/* Actions */}
-              <div className="absolute top-4 right-4 flex flex-col gap-2">
+              <div className="absolute top-2 right-2 flex flex-col gap-1">
                 <button
                   onClick={handleToggleFavorite}
-                  className={`p-3 rounded-full transition-all shadow-lg ${
+                  className={`p-2 rounded-full transition-all shadow-sm ${
                     isFavorite 
                       ? 'bg-red-500 text-white' 
                       : 'bg-white text-gray-500 hover:text-red-500'
                   }`}
                 >
-                  <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+                  <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
                 </button>
               </div>
             </div>
 
             {/* Share Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <button
                 onClick={() => handleShare('whatsapp')}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl font-semibold transition"
+                className="flex-1 flex items-center justify-center gap-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold text-sm transition"
               >
-                <MessageCircle className="w-5 h-5" />
-                Compartilhar no WhatsApp
+                <MessageCircle className="w-4 h-4" />
+                WhatsApp
               </button>
               <button
                 onClick={() => handleShare('copy')}
-                className="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-semibold transition flex items-center gap-2"
+                className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-semibold text-sm transition flex items-center gap-1"
               >
-                {feedback === 'copied' ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
-                {feedback === 'copied' ? 'Copiado!' : 'Copiar Link'}
+                {feedback === 'copied' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                {feedback === 'copied' ? 'Copiado!' : 'Copiar'}
               </button>
             </div>
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* Header */}
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-sm text-blue-600 font-bold uppercase">{product.brand}</span>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs text-blue-600 font-bold uppercase">{product.brand}</span>
                 <span className="text-gray-300">•</span>
-                <span className={`text-sm font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
+                <span className={`text-xs font-medium ${product.stock > 0 ? 'text-green-600' : 'text-red-500'}`}>
                   {product.stock > 0 ? `${product.stock} em estoque` : 'Indisponível'}
                 </span>
               </div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+              <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
                 {product.name}
               </h1>
 
               {/* Rating */}
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-2 mb-0">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`w-5 h-5 ${
+                      className={`w-4 h-4 ${
                         i < Math.round(product.rating)
                           ? 'fill-yellow-400 text-yellow-400'
                           : 'text-gray-200'
@@ -259,42 +259,42 @@ export default function ProductPage({ params }: ProductPageProps) {
                     />
                   ))}
                 </div>
-                <span className="text-gray-600">
-                  {product.rating.toFixed(1)} ({product.reviews} avaliações)
+                <span className="text-gray-600 text-sm">
+                  {product.rating.toFixed(1)} ({product.reviews})
                 </span>
               </div>
             </div>
 
             {/* Pricing Card */}
-            <div className="bg-white rounded-2xl border-2 border-gray-100 p-6">
+            <div className="bg-white rounded-lg border border-gray-100 p-4">
               {/* Original Price */}
               {discountPercent > 0 && (
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="text-gray-400 line-through text-lg">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-gray-400 line-through text-sm">
                     {formatCurrency(product.originalPrice)}
                   </span>
-                  <span className="bg-red-100 text-red-600 text-sm font-bold px-2 py-0.5 rounded">
+                  <span className="bg-red-100 text-red-600 text-xs font-bold px-1.5 py-0.5 rounded">
                     Economize {formatCurrency(savings)}
                   </span>
                 </div>
               )}
 
               {/* Current Price */}
-              <div className="text-4xl font-black text-gray-900 mb-3">
+              <div className="text-3xl font-black text-gray-900 mb-2">
                 {formatCurrency(product.price)}
               </div>
 
               {/* Pix Price */}
-              <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 mb-4">
-                <div className="flex items-center gap-2 mb-1">
-                  <Zap className="w-5 h-5 text-green-600" />
-                  <span className="text-2xl font-black text-green-700">{formatCurrency(pixPrice)}</span>
-                  <span className="bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <Zap className="w-4 h-4 text-green-600" />
+                  <span className="text-xl font-black text-green-700">{formatCurrency(pixPrice)}</span>
+                  <span className="bg-green-600 text-white text-xs font-bold px-1.5 py-0.5 rounded">
                     -{siteConfig.payment.pixDiscount}%
                   </span>
                 </div>
-                <p className="text-green-600 text-sm">
-                  à vista no Pix - Você economiza {formatCurrency(product.price - pixPrice)}!
+                <p className="text-green-600 text-xs">
+                  à vista no Pix - Economiza {formatCurrency(product.price - pixPrice)}!
                 </p>
               </div>
 
