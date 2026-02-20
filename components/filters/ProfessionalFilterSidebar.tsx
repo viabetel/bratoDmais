@@ -25,6 +25,7 @@ export interface FilterState {
 }
 
 export function ProfessionalFilterSidebar({
+  currentCategory,
   onFilterChange,
   isOpen = true,
   onClose,
@@ -36,6 +37,9 @@ export function ProfessionalFilterSidebar({
     condition: [],
     rating: 0,
   })
+
+  console.log('[v0] ProfessionalFilterSidebar - currentCategory:', currentCategory)
+  console.log('[v0] ProfessionalFilterSidebar - filters:', filters)
 
   const [expanded, setExpanded] = useState({
     price: true,
@@ -104,7 +108,7 @@ export function ProfessionalFilterSidebar({
       )}
 
       <aside
-        className={`fixed left-0 top-0 w-80 h-screen bg-white z-40 shadow-2xl border-r border-gray-200 lg:relative lg:w-72 lg:h-auto lg:shadow-none overflow-hidden transition-transform duration-300 ${
+        className={`fixed left-0 top-0 w-80 h-screen bg-white z-40 shadow-2xl border-r border-gray-200 overflow-hidden transition-transform duration-300 lg:w-72 ${
           isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
@@ -128,7 +132,7 @@ export function ProfessionalFilterSidebar({
         </div>
 
         {/* Scrollable Content */}
-        <div className="overflow-y-auto h-[calc(100vh-180px)] lg:h-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+        <div className="overflow-y-auto h-[calc(100vh-200px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           <div className="p-6 space-y-6">
             {/* Price Filter */}
             <div>
@@ -270,7 +274,7 @@ export function ProfessionalFilterSidebar({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-gradient-to-t from-gray-50 to-gray-25 border-t border-gray-200 px-6 py-4 lg:relative">
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-gray-50 to-white border-t border-gray-200 px-6 py-4">
           <Button
             onClick={handleClearAll}
             variant="outline"
