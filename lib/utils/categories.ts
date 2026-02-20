@@ -100,22 +100,27 @@ export function getAllSubcategories(): Subcategory[] {
 export function isCategoryValid(slug: string): boolean {
   return getCategoryBySlug(slug) !== undefined
 }
-<<<<<<< HEAD
 
 /**
- * Obtém todos os slugs de subcategorias de uma categoria pai
- * Usado para filtrar produtos quando uma categoria pai é selecionada
+ * Obtém todos os slugs de subcategorias de uma categoria pai.
+ * IMPORTANTE: inclui o próprio slug pai para suportar produtos catalogados
+ * diretamente na categoria pai (ex: categorySlug: 'climatizacao').
  */
 export function getSubcategorySlugs(parentCategorySlug: string): string[] {
   const category = categories.find((c) => c.slug === parentCategorySlug)
-  if (!category || !category.subcategories) {
-    // Se for uma subcategoria, retorna ela mesma
-    if (getCategoryBySlug(parentCategorySlug)) {
-      return [parentCategorySlug]
-    }
-    return []
+
+  if (category) {
+    // Categoria pai: inclui o slug do pai + todos os slugs de subcategorias
+    const subSlugs = category.subcategories?.map((s) => s.slug) ?? []
+    return [parentCategorySlug, ...subSlugs]
   }
-  return category.subcategories.map((s) => s.slug)
+
+  // É uma subcategoria válida: retorna ela mesma
+  if (getCategoryBySlug(parentCategorySlug)) {
+    return [parentCategorySlug]
+  }
+
+  return []
 }
 
 /**
@@ -125,5 +130,3 @@ export function isParentCategory(slug: string): boolean {
   const category = categories.find((c) => c.slug === slug)
   return category ? (category.subcategories && category.subcategories.length > 0) : false
 }
-=======
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308

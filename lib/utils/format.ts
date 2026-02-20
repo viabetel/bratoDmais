@@ -104,11 +104,14 @@ export function buildFiltersFromSearchParams(
  */
 export function slugify(text: string): string {
   return text
+    .normalize('NFD')                 // separa letra do diacrítico (é → e + ´)
+    .replace(/[\u0300-\u036f]/g, '')  // remove todos os diacríticos
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
+    .replace(/[^a-z0-9\s-]/g, '')    // remove chars não-alfanuméricos exceto hífen/espaço
+    .replace(/\s+/g, '-')            // espaços → hífen
+    .replace(/-+/g, '-')             // múltiplos hífens → um
+    .replace(/^-|-$/g, '')           // remove hífen inicial/final
 }
 
 /**

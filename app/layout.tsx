@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/Footer'
 import { WhatsAppButton } from '@/components/common/WhatsAppButton'
 import { CartToast } from '@/components/common/CartToast'
 import { CompareBar } from '@/components/common/CompareBar'
+import { DevDataValidator } from '@/components/common/DevDataValidator'
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <Footer />
         <WhatsAppButton />
         <CompareBar />
+        <DevDataValidator />
         <CartToast />
       </body>
     </html>

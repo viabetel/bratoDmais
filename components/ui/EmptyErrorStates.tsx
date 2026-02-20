@@ -3,7 +3,6 @@
 import { PackageX, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
 
-<<<<<<< HEAD
 interface EmptyStateProps {
   title?: string
   description?: string
@@ -15,13 +14,6 @@ export function EmptyState({
   description = 'Tente ajustar os filtros ou buscar por outro termo',
   action,
 }: EmptyStateProps) {
-=======
-export function EmptyState({
-  title = 'Nenhum produto encontrado',
-  description = 'Tente ajustar os filtros ou buscar por outro termo',
-  action?: { label: string; href: string }
-}) {
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
   return (
     <div className="text-center py-16 bg-white border border-gray-200 rounded-xl">
       <PackageX className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -38,7 +30,6 @@ export function EmptyState({
   )
 }
 
-<<<<<<< HEAD
 interface ErrorStateProps {
   title?: string
   description?: string
@@ -50,13 +41,6 @@ export function ErrorState({
   description = 'Tente recarregar a página ou voltar mais tarde',
   action,
 }: ErrorStateProps) {
-=======
-export function ErrorState({
-  title = 'Oops! Algo deu errado',
-  description = 'Tente recarregar a página ou voltar mais tarde',
-  action?: { label: string; onClick: () => void }
-}) {
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
   return (
     <div className="text-center py-16 bg-red-50 border border-red-200 rounded-xl">
       <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />

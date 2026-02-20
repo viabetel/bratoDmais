@@ -1,24 +1,17 @@
 'use client'
 
-import { useState, useMemo, use } from 'react'
+import { useState, useMemo, use, useEffect } from 'react'
 import Link from 'next/link'
-<<<<<<< HEAD
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Grid3x3, List, SlidersHorizontal, Package, ArrowRight, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/products/ProductCard'
 import { ServiceCard } from '@/components/services/ServiceCard'
 import { ServicesSummary } from '@/components/services/ServicesSummary'
-=======
-import { Grid3x3, List, SlidersHorizontal, Package } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { ProductCard } from '@/components/products/ProductCard'
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
 import {
   ProfessionalFilterSidebar,
   FiltersState,
 } from '@/components/filters/ProfessionalFilterSidebar'
-<<<<<<< HEAD
 import { ActiveFilterChips } from '@/components/filters/ActiveFilterChips'
 import { ServiceModeSelector, type ServiceMode } from '@/components/services/ServiceModeSelector'
 import { products } from '@/data/products'
@@ -42,11 +35,6 @@ const CATEGORY_HERO: Record<string, { gradient: string; emoji: string; headline:
 }
 
 const ITEMS_PER_PAGE = 12
-=======
-import { products } from '@/data/products'
-import { categories } from '@/data/categories'
-import { getCategoryBySlug } from '@/lib/utils/categories'
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>
@@ -57,51 +45,142 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const modeParam = searchParams.get('mode') as ServiceMode | null
-  const [mode, setMode] = useState<ServiceMode>(modeParam || 'buy')
-  const [layout, setLayout] = useState<'grid' | 'list'>('grid')
-  const [sortBy, setSortBy] = useState('relevancia')
+  // ── Calculados antes dos useState para que possam ser usados nos inits ──
+  const categoryData     = getCategoryBySlug(slug)
+  const subcategorySlugs = getSubcategorySlugs(slug)
+  // Fallback seguro: se por algum motivo slug for inválido, usa o próprio slug
+  const resolvedSlugs    = subcategorySlugs.length ? subcategorySlugs : [slug]
+
+  // ── Leitura do estado da URL (torna as URLs compartilháveis e back/forward funcionais) ──
+  const modeParam    = searchParams.get('mode') as ServiceMode | null
+  const sortParam    = searchParams.get('sort') || 'relevancia'
+  const layoutParam  = (searchParams.get('layout') || 'grid') as 'grid' | 'list'
+  const brandsParam  = searchParams.get('brands')?.split(',').filter(Boolean) ?? []
+  const condParam    = searchParams.get('cond')?.split(',').filter(Boolean)   ?? []
+  const priceMinP    = Number(searchParams.get('priceMin'))  || 0
+  const priceMaxP    = Number(searchParams.get('priceMax'))  || 10000
+  const inStockP     = searchParams.get('inStock') === '1'
+  const freeShipP    = searchParams.get('freeShip') === '1'
+  const ratingP      = Number(searchParams.get('rating'))   || 0
+
+  const [mode,       setMode]       = useState<ServiceMode>(modeParam || 'buy')
+  const [layout,     setLayout]     = useState<'grid' | 'list'>(layoutParam)
+  const [sortBy,     setSortBy]     = useState(sortParam)
   const [mobileOpen, setMobileOpen] = useState(false)
-<<<<<<< HEAD
-  const [page, setPage] = useState(1)
+  const [page,       setPage]       = useState(1)
   const [filters, setFilters] = useState<FiltersState>({
-    priceMin: 0, priceMax: 10000, brands: [], condition: [],
-    categories: [slug], inStock: false, rating: 0, freeShipping: false,
+    priceMin:    priceMinP,
+    priceMax:    priceMaxP,
+    brands:      brandsParam,
+    condition:   condParam,
+    categories:  resolvedSlugs,   // ← usa resolvedSlugs, declarado acima
+    inStock:     inStockP,
+    rating:      ratingP,
+    freeShipping: freeShipP,
   })
+
+  // ── Helper: serializa estado atual para URL ──
+  const buildParams = (
+    patch: Partial<{
+      mode: ServiceMode; sort: string; layout: string;
+      brands: string[]; cond: string[]; priceMin: number; priceMax: number;
+      inStock: boolean; freeShip: boolean; rating: number;
+    }> = {}
+  ) => {
+    const cur = {
+      mode:     patch.mode     ?? mode,
+      sort:     patch.sort     ?? sortBy,
+      layout:   patch.layout   ?? layout,
+      brands:   patch.brands   ?? filters.brands,
+      cond:     patch.cond     ?? filters.condition,
+      priceMin: patch.priceMin ?? filters.priceMin,
+      priceMax: patch.priceMax ?? filters.priceMax,
+      inStock:  patch.inStock  ?? filters.inStock,
+      freeShip: patch.freeShip ?? filters.freeShipping,
+      rating:   patch.rating   ?? filters.rating,
+    }
+    const p = new URLSearchParams()
+    if (cur.mode   !== 'buy')        p.set('mode',      cur.mode)
+    if (cur.sort   !== 'relevancia') p.set('sort',      cur.sort)
+    if (cur.layout !== 'grid')       p.set('layout',    cur.layout)
+    if (cur.brands.length)           p.set('brands',    cur.brands.join(','))
+    if (cur.cond.length)             p.set('cond',      cur.cond.join(','))
+    if (cur.priceMin > 0)            p.set('priceMin',  String(cur.priceMin))
+    if (cur.priceMax < 10000)        p.set('priceMax',  String(cur.priceMax))
+    if (cur.inStock)                 p.set('inStock',   '1')
+    if (cur.freeShip)                p.set('freeShip',  '1')
+    if (cur.rating > 0)              p.set('rating',    String(cur.rating))
+    return p.toString()
+  }
 
   const handleModeChange = (newMode: ServiceMode) => {
     setMode(newMode)
-    const params = new URLSearchParams(searchParams.toString())
-    if (newMode === 'buy') params.delete('mode')
-    else params.set('mode', newMode)
-    router.push(`?${params.toString()}`)
+    router.push(`?${buildParams({ mode: newMode })}`, { scroll: false })
   }
 
-  const categoryData = getCategoryBySlug(slug)
-  const subcategorySlugs = getSubcategorySlugs(slug)
+  const handleSortChange = (newSort: string) => {
+    setSortBy(newSort)
+    setPage(1)
+    router.push(`?${buildParams({ sort: newSort })}`, { scroll: false })
+  }
+
+  const handleLayoutChange = (newLayout: 'grid' | 'list') => {
+    setLayout(newLayout)
+    router.push(`?${buildParams({ layout: newLayout })}`, { scroll: false })
+  }
+
+  const handleFiltersChange = (newFilters: FiltersState) => {
+    setFilters(newFilters)
+    setPage(1)
+    router.push(`?${buildParams({
+      brands:   newFilters.brands,
+      cond:     newFilters.condition,
+      priceMin: newFilters.priceMin,
+      priceMax: newFilters.priceMax,
+      inStock:  newFilters.inStock,
+      freeShip: newFilters.freeShipping,
+      rating:   newFilters.rating,
+    })}`, { scroll: false })
+  }
+
+  // ── Re-hidrata state quando searchParams muda (back/forward no browser) ──
+  // No App Router o componente NÃO remonta ao navegar, então useState fica
+  // travado. Este effect lê a URL atual e atualiza o estado local para mantê-los 1:1.
+  useEffect(() => {
+    const newMode    = (searchParams.get('mode') as ServiceMode) || 'buy'
+    const newSort    = searchParams.get('sort')   || 'relevancia'
+    const newLayout  = (searchParams.get('layout') || 'grid') as 'grid' | 'list'
+    const newBrands  = searchParams.get('brands')?.split(',').filter(Boolean) ?? []
+    const newCond    = searchParams.get('cond')?.split(',').filter(Boolean)   ?? []
+    const newPriceMin = Number(searchParams.get('priceMin')) || 0
+    const newPriceMax = Number(searchParams.get('priceMax')) || 10000
+    const newInStock  = searchParams.get('inStock') === '1'
+    const newFreeShip = searchParams.get('freeShip') === '1'
+    const newRating   = Number(searchParams.get('rating')) || 0
+
+    setMode(newMode)
+    setSortBy(newSort)
+    setLayout(newLayout)
+    setFilters({
+      priceMin:    newPriceMin,
+      priceMax:    newPriceMax,
+      brands:      newBrands,
+      condition:   newCond,
+      categories:  resolvedSlugs,
+      inStock:     newInStock,
+      rating:      newRating,
+      freeShipping: newFreeShip,
+    })
+    setPage(1)
+  // searchParams muda a referência a cada navegação — é o trigger correto
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
+
   const hero = CATEGORY_HERO[slug] || { gradient: 'from-blue-600 to-blue-800', emoji: '📦', headline: 'Explore nossa coleção' }
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => {
       if (!subcategorySlugs.includes(p.categorySlug)) return false
-=======
-  const [filters, setFilters] = useState<FiltersState>({
-    priceMin: 0,
-    priceMax: 10000,
-    brands: [],
-    condition: [],
-    categories: [slug],
-    inStock: false,
-    rating: 0,
-    freeShipping: false,
-  })
-
-  const categoryData = getCategoryBySlug(slug)
-
-  const filteredProducts = useMemo(() => {
-    let result = products.filter((p) => {
-      if (!filters.categories.includes(p.categorySlug)) return false
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
       if (filters.brands.length > 0 && !filters.brands.includes(p.brand)) return false
       if (filters.condition.length > 0 && !filters.condition.includes(p.condition)) return false
       if (p.price < filters.priceMin || p.price > filters.priceMax) return false
@@ -123,7 +202,6 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       case 'melhor-avaliacao': return result.sort((a, b) => b.rating - a.rating)
       default: return result
     }
-<<<<<<< HEAD
   }, [filters, sortBy, subcategorySlugs])
 
   // Services filtered by category
@@ -139,9 +217,6 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
   const paginatedProducts = filteredProducts.slice(0, page * ITEMS_PER_PAGE)
   const hasMore = paginatedProducts.length < filteredProducts.length
-=======
-  }, [filters, sortBy])
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
 
   if (!categoryData) {
     return (
@@ -151,29 +226,13 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           <p className="text-sm text-gray-600 mb-6">Confira nossas categorias:</p>
           <div className="grid grid-cols-2 gap-3 mb-6">
             {categories.slice(0, 6).map((cat) => (
-<<<<<<< HEAD
               <Link key={cat.id} href={`/c/${cat.slug}`}
                 className="p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100">
-=======
-              <Link
-                key={cat.id}
-                href={`/c/${cat.slug}`}
-                className="p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100"
-              >
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                 <span className="text-sm font-semibold text-blue-700">{cat.name}</span>
               </Link>
             ))}
           </div>
-<<<<<<< HEAD
           <Link href="/busca"><Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">Ver Todos</Button></Link>
-=======
-          <Link href="/busca">
-            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-              Ver Todos os Produtos
-            </Button>
-          </Link>
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
         </div>
       </main>
     )
@@ -181,7 +240,6 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
   return (
     <main className="min-h-screen bg-gray-50/50">
-<<<<<<< HEAD
       {/* Category Hero Banner */}
       <div className={`bg-gradient-to-r ${hero.gradient} py-8 md:py-12`}>
         <div className="container mx-auto px-4">
@@ -230,136 +288,6 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               ))}
             </div>
           )}
-=======
-      <div className="container mx-auto px-4 py-6">
-        {/* Breadcrumb + Title */}
-        <div className="mb-6">
-          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
-            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
-            <span>/</span>
-            <span className="text-gray-800 font-medium">{categoryData.name}</span>
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">{categoryData.name}</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            {categoryData.description} - {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''}
-          </p>
-        </div>
-
-        {/* Layout: Sidebar + Content */}
-        <div className="flex gap-6 items-start">
-          {/* Desktop Sidebar */}
-          <ProfessionalFilterSidebar
-            currentCategory={slug}
-            onFilterChange={setFilters}
-            isOpen={true}
-          />
-
-          {/* Mobile Sidebar */}
-          <ProfessionalFilterSidebar
-            currentCategory={slug}
-            onFilterChange={setFilters}
-            isOpen={mobileOpen}
-            onClose={() => setMobileOpen(false)}
-          />
-
-          {/* Main Content */}
-          <div className="flex-1 min-w-0">
-            {/* Toolbar */}
-            <div className="flex items-center justify-between gap-4 mb-6 bg-white rounded-xl border border-gray-200/80 px-4 py-3 shadow-sm">
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="lg:hidden"
-                  onClick={() => setMobileOpen(true)}
-                >
-                  <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5" />
-                  Filtros
-                </Button>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 hidden sm:inline">Ordenar:</span>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-                  >
-                    <option value="relevancia">Relevância</option>
-                    <option value="menor-preco">Menor Preço</option>
-                    <option value="maior-preco">Maior Preço</option>
-                    <option value="maior-desconto">Maior Desconto</option>
-                    <option value="melhor-avaliacao">Melhor Avaliação</option>
-                  </select>
-                </div>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => setLayout('grid')}
-                  className={`p-1.5 rounded-md transition-colors ${
-                    layout === 'grid'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <Grid3x3 className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => setLayout('list')}
-                  className={`p-1.5 rounded-md transition-colors ${
-                    layout === 'list'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
-                  }`}
-                >
-                  <List className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Products */}
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
-                <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-600 mb-4">
-                  Nenhum produto encontrado com os filtros selecionados
-                </p>
-                <Button
-                  size="sm"
-                  onClick={() =>
-                    setFilters({
-                      priceMin: 0,
-                      priceMax: 10000,
-                      brands: [],
-                      condition: [],
-                      categories: [slug],
-                      inStock: false,
-                      rating: 0,
-                      freeShipping: false,
-                    })
-                  }
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  Limpar Filtros
-                </Button>
-              </div>
-            ) : (
-              <div
-                className={
-                  layout === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
-                    : 'space-y-3'
-                }
-              >
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    variant={layout === 'list' ? 'list' : 'grid'}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
->>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
         </div>
       </div>
 
@@ -368,14 +296,14 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           {/* Desktop Sidebar */}
           <ProfessionalFilterSidebar
             currentCategory={slug}
-            onFilterChange={(f) => { setFilters(f); setPage(1) }}
+            onFilterChange={(f) => handleFiltersChange(f)}
             isOpen={true}
           />
 
           {/* Mobile Sidebar */}
           <ProfessionalFilterSidebar
             currentCategory={slug}
-            onFilterChange={(f) => { setFilters(f); setPage(1) }}
+            onFilterChange={(f) => handleFiltersChange(f)}
             isOpen={mobileOpen}
             onClose={() => setMobileOpen(false)}
           />
@@ -397,7 +325,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                   <span className="text-xs text-gray-500 hidden sm:inline">Ordenar:</span>
                   <select
                     value={sortBy}
-                    onChange={(e) => { setSortBy(e.target.value); setPage(1) }}
+                    onChange={(e) => handleSortChange(e.target.value)}
                     className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   >
                     <option value="relevancia">Relevância</option>
@@ -411,7 +339,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               <div className="flex items-center gap-1">
                 {[['grid', Grid3x3], ['list', List]].map(([val, Icon]) => (
                   <button key={val as string}
-                    onClick={() => setLayout(val as 'grid' | 'list')}
+                    onClick={() => handleLayoutChange(val as 'grid' | 'list')}
                     className={`p-1.5 rounded-md transition-colors ${layout === val ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
                   >
                     {/* @ts-ignore */}
@@ -427,7 +355,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
                   <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
                   <p className="text-sm text-gray-600 mb-4">Nenhum produto encontrado</p>
-                  <Button size="sm" onClick={() => setFilters({ priceMin: 0, priceMax: 10000, brands: [], condition: [], categories: [slug], inStock: false, rating: 0, freeShipping: false })}
+                  <Button size="sm" onClick={() => handleFiltersChange({ priceMin: 0, priceMax: 10000, brands: [], condition: [], categories: resolvedSlugs, inStock: false, rating: 0, freeShipping: false })}
                     className="bg-blue-600 hover:bg-blue-700 text-white">
                     Limpar Filtros
                   </Button>
@@ -437,18 +365,23 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                   {/* Active filter chips */}
                   <ActiveFilterChips
                     filters={filters}
-                    onRemoveBrand={(b) => setFilters(f => ({ ...f, brands: f.brands.filter(x => x !== b) }))}
-                    onRemoveCondition={(c) => setFilters(f => ({ ...f, condition: f.condition.filter(x => x !== c) }))}
-                    onRemoveService={(s) => setFilters(f => ({ ...f, serviceTypes: (f.serviceTypes ?? []).filter(x => x !== s) }))}
-                    onClearPrice={() => setFilters(f => ({ ...f, priceMin: 0, priceMax: 10000 }))}
-                    onToggleInStock={() => setFilters(f => ({ ...f, inStock: !f.inStock }))}
-                    onToggleFreeShipping={() => setFilters(f => ({ ...f, freeShipping: !f.freeShipping }))}
-                    onClearRating={() => setFilters(f => ({ ...f, rating: 0 }))}
-                    onClearAll={() => setFilters({ priceMin: 0, priceMax: 10000, brands: [], condition: [], categories: [slug], inStock: false, rating: 0, freeShipping: false })}
+                    onRemoveBrand={(b) => handleFiltersChange({ ...filters, brands: filters.brands.filter(x => x !== b) })}
+                    onRemoveCondition={(c) => handleFiltersChange({ ...filters, condition: filters.condition.filter(x => x !== c) })}
+                    onRemoveService={(s) => handleFiltersChange({ ...filters, serviceTypes: (filters.serviceTypes ?? []).filter(x => x !== s) })}
+                    onClearPrice={() => handleFiltersChange({ ...filters, priceMin: 0, priceMax: 10000 })}
+                    onToggleInStock={() => handleFiltersChange({ ...filters, inStock: !filters.inStock })}
+                    onToggleFreeShipping={() => handleFiltersChange({ ...filters, freeShipping: !filters.freeShipping })}
+                    onClearRating={() => handleFiltersChange({ ...filters, rating: 0 })}
+                    onClearAll={() => handleFiltersChange({ priceMin: 0, priceMax: 10000, brands: [], condition: [], categories: resolvedSlugs, inStock: false, rating: 0, freeShipping: false })}
                   />
                   <div className={layout === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4' : 'space-y-3'}>
                     {paginatedProducts.map(product => (
-                      <ProductCard key={product.id} product={product} variant={layout === 'list' ? 'list' : 'grid'} />
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        variant={layout === 'list' ? 'list' : 'grid'}
+                        intentHref={mode !== 'buy' ? `/p/${product.slug}?intent=${mode}` : undefined}
+                      />
                     ))}
                   </div>
 
