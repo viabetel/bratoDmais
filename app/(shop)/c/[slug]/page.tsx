@@ -2,16 +2,21 @@
 
 import { useState, useMemo, use } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Grid3x3, List, SlidersHorizontal, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/products/ProductCard'
+import { ServiceCard } from '@/components/services/ServiceCard'
+import { ServicesSummary } from '@/components/services/ServicesSummary'
 import {
   ProfessionalFilterSidebar,
   FiltersState,
 } from '@/components/filters/ProfessionalFilterSidebar'
+import { ServiceModeSelector, type ServiceMode } from '@/components/services/ServiceModeSelector'
 import { products } from '@/data/products'
 import { categories } from '@/data/categories'
-import { getCategoryBySlug } from '@/lib/utils/categories'
+import { getServicesByType } from '@/data/services'
+import { getCategoryBySlug, getSubcategorySlugs } from '@/lib/utils/categories'
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>
@@ -19,6 +24,13 @@ interface CategoryPageProps {
 
 export default function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = use(params)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  
+  // Get mode from URL or default to 'buy'
+  const modeParam = searchParams.get('mode') as ServiceMode | null
+  const [mode, setMode] = useState<ServiceMode>(modeParam || 'buy')
+  
   const [layout, setLayout] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('relevancia')
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -33,11 +45,22 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     freeShipping: false,
   })
 
+  const handleModeChange = (newMode: ServiceMode) => {
+    setMode(newMode)
+    // Update URL with mode query param
+    const params = new URLSearchParams(searchParams)
+    params.set('mode', newMode)
+    router.push(`?${params.toString()}`)
+  }
+
   const categoryData = getCategoryBySlug(slug)
+  const applicableSubcategorySlugs = getSubcategorySlugs(slug)
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => {
-      if (!filters.categories.includes(p.categorySlug)) return false
+      // If viewing a parent category, check if product's category is in its subcategories
+      // If viewing a leaf category, check exact match
+      if (!applicableSubcategorySlugs.includes(p.categorySlug)) return false
       if (filters.brands.length > 0 && !filters.brands.includes(p.brand)) return false
       if (filters.condition.length > 0 && !filters.condition.includes(p.condition)) return false
       if (p.price < filters.priceMin || p.price > filters.priceMax) return false
@@ -63,7 +86,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       default:
         return result
     }
-  }, [filters, sortBy])
+  }, [filters, sortBy, applicableSubcategorySlugs])
 
   if (!categoryData) {
     return (
@@ -127,6 +150,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
           {/* Main Content */}
           <div className="flex-1 min-w-0">
+            {/* Service Mode Selector */}
+            <div className="mb-4 flex justify-center">
+              <ServiceModeSelector currentMode={mode} onModeChange={handleModeChange} />
+            </div>
+
             {/* Toolbar */}
             <div className="flex items-center justify-between gap-4 mb-6 bg-white rounded-xl border border-gray-200/80 px-4 py-3 shadow-sm">
               <div className="flex items-center gap-3">
@@ -178,52 +206,91 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               </div>
             </div>
 
-            {/* Products */}
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
-                <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-600 mb-4">
-                  Nenhum produto encontrado com os filtros selecionados
-                </p>
-                <Button
-                  size="sm"
-                  onClick={() =>
-                    setFilters({
-                      priceMin: 0,
-                      priceMax: 10000,
-                      brands: [],
-                      condition: [],
-                      categories: [slug],
-                      inStock: false,
-                      rating: 0,
-                      freeShipping: false,
-                    })
+            {/* Products/Services Grid */}
+            {mode === 'buy' ? (
+              // PRODUTOS MODE
+              filteredProducts.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
+                  <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm text-gray-600 mb-4">
+                    Nenhum produto encontrado com os filtros selecionados
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      setFilters({
+                        priceMin: 0,
+                        priceMax: 10000,
+                        brands: [],
+                        condition: [],
+                        categories: [slug],
+                        inStock: false,
+                        rating: 0,
+                        freeShipping: false,
+                      })
+                    }
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Limpar Filtros
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  className={
+                    layout === 'grid'
+                      ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
+                      : 'space-y-3'
                   }
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  Limpar Filtros
-                </Button>
-              </div>
+                  {filteredProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      variant={layout === 'list' ? 'list' : 'grid'}
+                    />
+                  ))}
+                </div>
+              )
             ) : (
-              <div
-                className={
-                  layout === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
-                    : 'space-y-3'
-                }
-              >
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    variant={layout === 'list' ? 'list' : 'grid'}
-                  />
-                ))}
-              </div>
+              // SERVIÇOS MODE (Rental/Maintenance)
+              (() => {
+                const applicableServices = mode === 'rent'
+                  ? getServicesByType('rental')
+                  : getServicesByType('maintenance')
+
+                return applicableServices.length === 0 ? (
+                  <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
+                    <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-sm text-gray-600 mb-4">
+                      Nenhum serviço de {mode === 'rent' ? 'aluguel' : 'manutenção'} disponível nesta categoria
+                    </p>
+                    <Button
+                      size="sm"
+                      onClick={() => setMode('buy')}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Voltar para Produtos
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {applicableServices.map((service) => (
+                      <ServiceCard
+                        key={service.id}
+                        service={service}
+                        isRental={mode === 'rent'}
+                      />
+                    ))}
+                  </div>
+                )
+              })()
             )}
           </div>
         </div>
       </div>
+      
+      {/* Services Summary Floating Panel */}
+      <ServicesSummary />
     </main>
   )
 }

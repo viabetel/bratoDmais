@@ -3,12 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Star, Heart, ShoppingCart, Check, Package, Truck, Eye, Share2, BarChart3 } from 'lucide-react'
+import { Star, Heart, ShoppingCart, Check, Package, Truck, Eye, Share2, BarChart3, Wrench, Shield } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cartStore'
 import { useCompareStore } from '@/lib/store/compareStore'
 import { useFavoritesStore } from '@/lib/store/favoritesStore'
 import { Product } from '@/data/products'
 import { formatBRL, getDiscountPercent, getPixPrice } from '@/lib/utils/format'
+import { getServicesByCategory } from '@/data/services'
 
 interface ProductCardProps {
   product: Product
@@ -49,6 +50,7 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
 
   const discountPercent = getDiscountPercent(product.originalPrice, product.price)
   const pixPrice = getPixPrice(product.price)
+  const availableServices = getServicesByCategory(product.categorySlug)
   
   const imageUrl = imageError || !product.images?.[0] || product.images[0].startsWith('/products/') 
     ? getPlaceholderImage(product) 

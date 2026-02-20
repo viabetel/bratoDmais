@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Truck, Shield, CreditCard, Zap, Flame, Refrigerator, Microwave, Droplets, Star, Award, Headset, Banknote, ChevronRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Truck, Shield, CreditCard, Zap, Flame, Refrigerator, Microwave, Droplets, Star, Award, Headset, Banknote, ChevronRight, Sparkles, Wrench, Package, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { products } from '@/data/products'
+import { getServicesByType } from '@/data/services'
 import { ProductCard } from '@/components/products/ProductCard'
+import { ServiceCard } from '@/components/services/ServiceCard'
 import { HeroSection } from '@/components/home/HeroSection'
 import { TrustBanner } from '@/components/home/TrustBanner'
 import { CategoriesGrid } from '@/components/home/CategoriesGrid'
@@ -33,38 +35,27 @@ const getMaisVendidos = () => {
 
 const getAtePrix = (price: number) => products.filter(p => p.price <= price).slice(0, 4)
 
-// Promo Banner Strip
-function PromoBanner() {
-  return (
-    <div className="bg-gradient-to-r from-red-600 via-red-500 to-orange-500 py-2 overflow-hidden">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-center gap-4 md:gap-6 text-white text-xs md:text-sm font-medium">
-          <div className="flex items-center gap-1.5">
-            <Flame className="w-3.5 h-3.5 text-yellow-300" />
-            <span className="font-bold">SUPER OFERTAS</span>
-          </div>
-          <span className="text-white/50 hidden sm:inline">•</span>
-          <span className="hidden sm:inline">Até 80% OFF + Frete Grátis</span>
-          <Link href="/busca?sort=discount" className="flex items-center gap-1 bg-white/20 px-2.5 py-1 rounded-full text-xs font-bold hover:bg-white/30 transition">
-            APROVEITE <ChevronRight className="w-3 h-3" />
-          </Link>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function Home() {
   const ofertasDaSemana = getOfertasDaSemana()
   const maisVendidos = getMaisVendidos()
   const ate199 = getAtePrix(199)
   const ate499 = getAtePrix(499)
   const ate999 = getAtePrix(999)
+  
+  // Get featured services
+  let allServices: any[] = []
+  try {
+    const instalacaoServices = getServicesByType('installation').slice(0, 2)
+    const aluguelServices = getServicesByType('rental').slice(0, 2)
+    const manutencaoServices = getServicesByType('maintenance').slice(0, 2)
+    allServices = [...instalacaoServices, ...aluguelServices, ...manutencaoServices].slice(0, 6)
+  } catch (error) {
+    console.error('[v0] Error loading services:', error)
+    allServices = []
+  }
 
   return (
     <div className="min-h-screen bg-white">
-      <PromoBanner />
-      
       {/* Hero Section */}
       <HeroSection />
       
@@ -113,6 +104,60 @@ export default function Home() {
         badge="bestseller"
         hideTitle={true}
       />
+
+      {/* Ofertas Imperdíveis - Services Section */}
+      <section className="py-12 md:py-16 bg-gradient-to-r from-blue-600 to-blue-700">
+        <div className="container mx-auto px-4">
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="w-5 h-5 text-yellow-300" />
+                  <span className="text-sm font-bold text-blue-100 uppercase tracking-wide">Serviços Exclusivos</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-black text-white text-balance">
+                  Ofertas Imperdíveis!
+                </h2>
+                <p className="text-blue-100 mt-2">
+                  Instalação, Manutenção, Aluguel - Tudo que você precisa em um só lugar
+                </p>
+              </div>
+              <Link href="/c/climatizacao" className="hidden md:block flex-shrink-0 ml-4">
+                <Button className="bg-white hover:bg-blue-50 text-blue-600 font-bold px-6 py-2.5">
+                  Ver Mais <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Services Grid */}
+          {allServices.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                {allServices.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    isRental={service.type === 'rental'}
+                  />
+                ))}
+              </div>
+              <div className="md:hidden text-center">
+                <Link href="/c/climatizacao">
+                  <Button className="w-full bg-white hover:bg-blue-50 text-blue-600 font-bold py-2.5">
+                    Ver Todas os Serviços <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <Package className="w-12 h-12 text-blue-100 mx-auto mb-3" />
+              <p className="text-blue-100">Serviços em breve...</p>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Price Ranges Banner */}
       <section className="py-6 md:py-8">

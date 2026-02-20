@@ -10,8 +10,12 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { products } from '@/data/products'
+import { getServicesByType } from '@/data/services'
 import { useCartStore } from '@/lib/store/cartStore'
 import { useFavoritesStore } from '@/lib/store/favoritesStore'
+import { InstallationModule } from '@/components/services/InstallationModule'
+import { MaintenanceModule } from '@/components/services/MaintenanceModule'
+import { RentalModule } from '@/components/services/RentalModule'
 import { ProductCard } from '@/components/products/ProductCard'
 import { siteConfig, formatCurrency, calcPixPrice, calcInstallments, calcShipping } from '@/lib/config'
 
@@ -50,9 +54,11 @@ export default function ProductPage({ params }: ProductPageProps) {
   const [extendedWarranty, setExtendedWarranty] = useState(false)
   const [installation, setInstallation] = useState(false)
   const [showSpecs, setShowSpecs] = useState(false)
+  const [selectedServices, setSelectedServices] = useState<Array<{serviceId: string; serviceName: string; servicePrice: number; serviceType: string}>>([])
   
   const product = products.find((p) => p.slug === slug)
   const addItem = useCartStore((state) => state.addItem)
+  const addServiceToProduct = useCartStore((state) => state.addServiceToProduct)
   const isFavorite = useFavoritesStore((state) => state.isFavorite(product?.id || ''))
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite)
 
@@ -534,6 +540,58 @@ export default function ProductPage({ params }: ProductPageProps) {
               </Link>
             </div>
           </div>
+        </div>
+
+        {/* Service Modules */}
+        <div className="mt-12 space-y-6">
+          {/* Installation Module */}
+          {['geladeiras', 'maquinas-lavar', 'ar-condicionado', 'tvs', 'climatizacao'].includes(product.categorySlug) && (
+            <InstallationModule 
+              categorySlug={product.categorySlug}
+              productName={product.name}
+              basePrice={product.price}
+              onSelect={(service) => {
+                setSelectedServices([...selectedServices, {
+                  serviceId: service.id,
+                  serviceName: service.name,
+                  servicePrice: service.price,
+                  serviceType: 'installation'
+                }])
+              }}
+            />
+          )}
+
+          {/* Maintenance Module */}
+          {['geladeiras', 'ar-condicionado', 'maquinas-lavar', 'climatizacao'].includes(product.categorySlug) && (
+            <MaintenanceModule 
+              categorySlug={product.categorySlug}
+              productName={product.name}
+              onSelect={(service) => {
+                setSelectedServices([...selectedServices, {
+                  serviceId: service.id,
+                  serviceName: service.name,
+                  servicePrice: service.price,
+                  serviceType: 'maintenance'
+                }])
+              }}
+            />
+          )}
+
+          {/* Rental Module */}
+          {['geladeiras', 'maquinas-lavar', 'ar-condicionado', 'climatizacao', 'tvs', 'notebooks', 'smartphones'].includes(product.categorySlug) && (
+            <RentalModule 
+              productId={product.id}
+              productName={product.name}
+              onSelect={(service) => {
+                setSelectedServices([...selectedServices, {
+                  serviceId: service.id,
+                  serviceName: service.name,
+                  servicePrice: service.price,
+                  serviceType: 'rental'
+                }])
+              }}
+            />
+          )}
         </div>
 
         {/* Description & Specs */}
