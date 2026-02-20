@@ -100,6 +100,7 @@ export function getAllSubcategories(): Subcategory[] {
 export function isCategoryValid(slug: string): boolean {
   return getCategoryBySlug(slug) !== undefined
 }
+<<<<<<< HEAD
 
 /**
  * Obtém todos os slugs de subcategorias de uma categoria pai
@@ -124,3 +125,5 @@ export function isParentCategory(slug: string): boolean {
   const category = categories.find((c) => c.slug === slug)
   return category ? (category.subcategories && category.subcategories.length > 0) : false
 }
+=======
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308

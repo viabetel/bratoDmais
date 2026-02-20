@@ -3,12 +3,46 @@
 @tailwind utilities;
 
 /* ========================================
+<<<<<<< HEAD
    BASE TYPOGRAPHY - Tamanho correto 16px
    ======================================== */
 
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+=======
+   ZOOM GLOBAL - Site 85% do tamanho normal
+   ======================================== */
+
+/* Container principal com zoom */
+#__next,
+main,
+.zoom-container {
+  transform-origin: top center;
+}
+
+/* Reduz tamanho base da fonte para 80% (afeta rem/em) */
+html {
+  font-size: 12.8px; /* 80% de 16px = 12.8px */
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 12.8px;
+  }
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 12.8px;
+  }
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 12.8px;
+  }
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
 }
 
 body {

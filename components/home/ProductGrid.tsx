@@ -1,10 +1,19 @@
 'use client'
 
+<<<<<<< HEAD
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Zap, Clock, TrendingUp } from 'lucide-react'
 import { Product } from '@/data/products'
 import { ProductCard } from '@/components/products/ProductCard'
+=======
+import { useState } from 'react'
+import Link from 'next/link'
+import { ArrowRight, Zap } from 'lucide-react'
+import { Product } from '@/data/products'
+import { ProductCard } from '@/components/products/ProductCard'
+import { getDiscountPercent, formatBRL } from '@/lib/utils/format'
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
 
 interface ProductGridProps {
   title: string
@@ -13,6 +22,7 @@ interface ProductGridProps {
   viewMoreHref: string
   badge?: 'flash' | 'bestseller' | null
   hideTitle?: boolean
+<<<<<<< HEAD
   showCountdown?: boolean
 }
 
@@ -57,10 +67,29 @@ export function ProductGrid({
       <section className="py-6 md:py-10 bg-white">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+=======
+}
+
+export function ProductGrid({
+  title,
+  description,
+  products,
+  viewMoreHref,
+  badge,
+  hideTitle = false,
+}: ProductGridProps) {
+  if (hideTitle) {
+    // When hideTitle is true, render only the products grid without header
+    return (
+      <section className="py-8 md:py-12 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
             {products.map((product) => (
               <ProductCard key={product.id} product={product} variant="grid" />
             ))}
           </div>
+<<<<<<< HEAD
           <div className="mt-6 text-center">
             <Link href={viewMoreHref}>
               <button className="inline-flex items-center gap-2 px-8 py-3 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white font-bold rounded-xl transition-all duration-200 hover:shadow-lg text-sm">
@@ -69,11 +98,14 @@ export function ProductGrid({
               </button>
             </Link>
           </div>
+=======
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
         </div>
       </section>
     )
   }
 
+<<<<<<< HEAD
   const isFlash = badge === 'flash'
 
   return (
@@ -105,10 +137,43 @@ export function ProductGrid({
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+=======
+  // When hideTitle is false, render with full header
+  return (
+    <section className="py-12 md:py-16 bg-gray-50">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              {badge === 'flash' && (
+                <span className="inline-flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                  <Zap className="w-3 h-3" /> OFERTA RELÂMPAGO
+                </span>
+              )}
+              {badge === 'bestseller' && (
+                <span className="inline-flex items-center gap-1 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold">
+                  ⭐ MAIS VENDIDOS
+                </span>
+              )}
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">{title}</h2>
+            <p className="text-gray-500 mt-1">{description}</p>
+          </div>
+          <Link
+            href={viewMoreHref}
+            className="text-blue-600 hover:text-blue-700 font-semibold text-sm flex items-center gap-1"
+          >
+            Ver tudo <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
           {products.map((product) => (
             <ProductCard key={product.id} product={product} variant="grid" />
           ))}
         </div>
+<<<<<<< HEAD
 
         <div className="mt-6 text-center">
           <Link href={viewMoreHref}>
@@ -122,6 +187,8 @@ export function ProductGrid({
             </button>
           </Link>
         </div>
+=======
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
       </div>
     </section>
   )

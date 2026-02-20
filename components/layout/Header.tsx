@@ -8,7 +8,11 @@ import {
   Search, ShoppingCart, Heart, User, Menu, X, 
   ChevronDown, Truck, Shield, CreditCard, Zap,
   Phone, MapPin, Refrigerator, Flame, Microwave, Droplets,
+<<<<<<< HEAD
   Wind, Home, Tv, Laptop, Smartphone, Package, Wrench, Calendar
+=======
+  Wind, Home, Tv, Laptop, Smartphone, Package
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/data/categories'
@@ -312,7 +316,14 @@ export function Header() {
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group"
                             onClick={() => setMegaMenuOpen(false)}
                           >
+<<<<<<< HEAD
                             <Shield className="w-6 h-6 text-blue-600 flex-shrink-0" />
+=======
+                            {(() => {
+                              const Icon = getCategoryIcon(category.slug)
+                              return <Icon className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                            })()}
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                             <div>
                               <span className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors block text-sm">
                                 Manutenção
@@ -339,6 +350,7 @@ export function Header() {
                       </div>
                     </div>
                     
+<<<<<<< HEAD
                     {/* RIGHT: Banner Lateral */}
                     <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-white flex flex-col justify-between">
                       <div>
@@ -358,6 +370,24 @@ export function Header() {
                       </div>
                       
                       <div className="space-y-2 text-sm">
+=======
+                    {/* Banner Lateral */}
+                    <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-white">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Flame className="w-5 h-5 text-orange-300" />
+                        <h3 className="font-bold text-lg">Ofertas Imperdíveis!</h3>
+                      </div>
+                      <p className="text-sm text-blue-100 mb-4">Até 80% de desconto em produtos selecionados</p>
+                      <Link 
+                        href="/busca?sort=discount"
+                        onClick={() => setMegaMenuOpen(false)}
+                      >
+                        <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold">
+                          Ver Ofertas
+                        </Button>
+                      </Link>
+                      <div className="mt-6 space-y-2 text-sm">
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                         <div className="flex items-center gap-2">
                           <Truck className="w-4 h-4" />
                           <span>Frete Grátis +{formatCurrency(siteConfig.shipping.freeShippingMinimum)}</span>

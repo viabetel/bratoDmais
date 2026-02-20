@@ -203,8 +203,12 @@ export default function ProductPage({ params }: ProductPageProps) {
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Gallery */}
           <div className="space-y-2">
+<<<<<<< HEAD
             {/* Main image */}
             <div className="bg-white rounded-xl border border-gray-100 overflow-hidden aspect-square flex items-center justify-center relative group">
+=======
+            <div className="bg-white rounded-lg border border-gray-100 overflow-hidden aspect-square flex items-center justify-center relative group">
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
               <img 
                 src={galleryImages[activeGalleryImage]} 
                 alt={product.name}
@@ -295,7 +299,11 @@ export default function ProductPage({ params }: ProductPageProps) {
                 className="flex-1 flex items-center justify-center gap-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold text-sm transition"
               >
                 <MessageCircle className="w-4 h-4" />
+<<<<<<< HEAD
                 Compartilhar
+=======
+                WhatsApp
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
               </button>
               <button
                 onClick={() => handleShare('copy')}
@@ -406,6 +414,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                 </div>
               </div>
 
+<<<<<<< HEAD
               {/* Extra Services - Dynamic from category */}
               <div className="space-y-2 mb-4 border-t border-gray-100 pt-3">
                 <div className="flex items-center justify-between mb-1">
@@ -414,10 +423,18 @@ export default function ProductPage({ params }: ProductPageProps) {
                 </div>
                 
                 <label className="flex items-start gap-2 p-2.5 border rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition text-xs group">
+=======
+              {/* Extra Services */}
+              <div className="space-y-2 mb-4 border-t border-gray-100 pt-3">
+                <p className="font-semibold text-gray-900 text-sm">Serviços:</p>
+                
+                <label className="flex items-start gap-2 p-2 border rounded cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition text-xs">
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                   <input
                     type="checkbox"
                     checked={extendedWarranty}
                     onChange={(e) => setExtendedWarranty(e.target.checked)}
+<<<<<<< HEAD
                     className="mt-0.5 w-4 h-4 text-blue-600 rounded flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
@@ -431,10 +448,25 @@ export default function ProductPage({ params }: ProductPageProps) {
 
                 {['geladeiras', 'maquinas-lavar', 'ar-condicionado', 'tvs', 'climatizacao', 'microondas', 'fogoes'].includes(product.categorySlug) && (
                   <label className="flex items-start gap-2 p-2.5 border rounded-lg cursor-pointer hover:border-orange-300 hover:bg-orange-50/30 transition text-xs group">
+=======
+                    className="mt-0.5 w-4 h-4 text-blue-600 rounded"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="font-medium text-gray-900">Garantia +{siteConfig.policies.warrantyMonths}m</span>
+                      <span className="font-bold text-blue-600 flex-shrink-0">+{formatCurrency(siteConfig.policies.extendedWarrantyPrice)}</span>
+                    </div>
+                  </div>
+                </label>
+
+                {['geladeiras', 'maquinas-lavar', 'ar-condicionado', 'tvs'].includes(product.categorySlug) && (
+                  <label className="flex items-start gap-2 p-2 border rounded cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition text-xs">
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                     <input
                       type="checkbox"
                       checked={installation}
                       onChange={(e) => setInstallation(e.target.checked)}
+<<<<<<< HEAD
                       className="mt-0.5 w-4 h-4 text-orange-600 rounded flex-shrink-0"
                     />
                     <div className="flex-1 min-w-0">
@@ -443,6 +475,15 @@ export default function ProductPage({ params }: ProductPageProps) {
                         <span className="font-bold text-orange-600 flex-shrink-0">+{formatCurrency(siteConfig.policies.installationPrice)}</span>
                       </div>
                       <p className="text-gray-500 mt-0.5">Técnico certificado com garantia de serviço</p>
+=======
+                      className="mt-0.5 w-4 h-4 text-blue-600 rounded"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-medium text-gray-900">Instalação</span>
+                        <span className="font-bold text-blue-600 flex-shrink-0">+{formatCurrency(siteConfig.policies.installationPrice)}</span>
+                      </div>
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                     </div>
                   </label>
                 )}
@@ -464,6 +505,7 @@ export default function ProductPage({ params }: ProductPageProps) {
 
               {/* Action Buttons */}
               <div className="space-y-2">
+<<<<<<< HEAD
                 {/* Urgency / social proof */}
                 {product.stock > 0 && product.stock <= 8 && (
                   <div className="flex items-center gap-2 bg-orange-50 border border-orange-200 rounded-lg px-3 py-2">
@@ -487,21 +529,46 @@ export default function ProductPage({ params }: ProductPageProps) {
                 >
                   <Zap className="w-4 h-4 mr-1.5" />
                   COMPRAR AGORA
+=======
+                <Button
+                  onClick={handleBuyNow}
+                  disabled={product.stock === 0}
+                  className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 text-sm rounded shadow-lg shadow-red-500/25"
+                >
+                  <Zap className="w-4 h-4 mr-1" />
+                  COMPRAR
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                 </Button>
 
                 <Button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0}
+<<<<<<< HEAD
                   className={`w-full py-3 text-sm rounded-lg font-bold transition-all active:scale-[0.98] ${
+=======
+                  className={`w-full py-3 text-sm rounded font-bold ${
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                     feedback === 'cart'
                       ? 'bg-green-500 hover:bg-green-500 text-white'
                       : 'bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20'
                   }`}
                 >
                   {feedback === 'cart' ? (
+<<<<<<< HEAD
                     <><CheckCircle className="w-4 h-4 mr-1.5 inline" />Adicionado ao carrinho!</>
                   ) : (
                     <><ShoppingCart className="w-4 h-4 mr-1.5 inline" />Adicionar ao Carrinho</>
+=======
+                    <>
+                      <CheckCircle className="w-4 h-4 mr-1 inline" />
+                      Adicionado!
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-4 h-4 mr-1 inline" />
+                      Carrinho
+                    </>
+>>>>>>> 18863e85927b05c2b3a318e701f2d129ca350308
                   )}
                 </Button>
 
