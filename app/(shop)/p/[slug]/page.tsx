@@ -299,79 +299,65 @@ export default function ProductPage({ params }: ProductPageProps) {
               </div>
 
               {/* Installments */}
-              <div className="flex items-center gap-2 text-gray-600 mb-4">
-                <CreditCard className="w-5 h-5" />
-                <span>
-                  ou <strong>{installments}x de {formatCurrency(installmentValue)}</strong> sem juros
-                </span>
+              <div className="text-xs text-gray-600 mb-3 flex items-center gap-1">
+                <CreditCard className="w-3.5 h-3.5" />
+                ou <strong>{installments}x</strong> de <strong>{formatCurrency(installmentValue)}</strong> sem juros
               </div>
 
               {/* Quantity Selector */}
-              <div className="flex items-center gap-4 mb-6">
-                <span className="text-gray-600 font-medium">Quantidade:</span>
-                <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-xs font-medium text-gray-600">Qtd:</span>
+                <div className="flex items-center border border-gray-200 rounded overflow-hidden">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-4 py-2 hover:bg-gray-100 transition"
+                    className="px-2 py-1 hover:bg-gray-100 transition text-xs"
                     disabled={quantity <= 1}
                   >
-                    <Minus className="w-4 h-4" />
+                    −
                   </button>
-                  <span className="px-4 py-2 font-bold min-w-[50px] text-center">{quantity}</span>
+                  <span className="px-2.5 py-1 font-bold text-xs min-w-[30px] text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                    className="px-4 py-2 hover:bg-gray-100 transition"
+                    className="px-2 py-1 hover:bg-gray-100 transition text-xs"
                     disabled={quantity >= product.stock}
                   >
-                    <Plus className="w-4 h-4" />
+                    +
                   </button>
                 </div>
               </div>
 
               {/* Extra Services */}
-              <div className="space-y-3 mb-6">
-                <p className="font-semibold text-gray-900">Serviços adicionais:</p>
+              <div className="space-y-2 mb-4 border-t border-gray-100 pt-3">
+                <p className="font-semibold text-gray-900 text-sm">Serviços:</p>
                 
-                <label className="flex items-start gap-3 p-3 border-2 rounded-xl cursor-pointer hover:border-blue-300 transition">
+                <label className="flex items-start gap-2 p-2 border rounded cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition text-xs">
                   <input
                     type="checkbox"
                     checked={extendedWarranty}
                     onChange={(e) => setExtendedWarranty(e.target.checked)}
-                    className="mt-1 w-5 h-5 text-blue-600 rounded"
+                    className="mt-0.5 w-4 h-4 text-blue-600 rounded"
                   />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-gray-900 flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-blue-600" />
-                        Garantia Estendida (+{siteConfig.policies.warrantyMonths} meses)
-                      </span>
-                      <span className="font-bold text-blue-600">
-                        +{formatCurrency(siteConfig.policies.extendedWarrantyPrice)}
-                      </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="font-medium text-gray-900">Garantia +{siteConfig.policies.warrantyMonths}m</span>
+                      <span className="font-bold text-blue-600 flex-shrink-0">+{formatCurrency(siteConfig.policies.extendedWarrantyPrice)}</span>
                     </div>
-                    <p className="text-sm text-gray-500">Proteção total contra defeitos</p>
                   </div>
                 </label>
 
                 {['geladeiras', 'maquinas-lavar', 'ar-condicionado', 'tvs'].includes(product.categorySlug) && (
-                  <label className="flex items-start gap-3 p-3 border-2 rounded-xl cursor-pointer hover:border-blue-300 transition">
+                  <label className="flex items-start gap-2 p-2 border rounded cursor-pointer hover:border-blue-300 hover:bg-blue-50/30 transition text-xs">
                     <input
                       type="checkbox"
                       checked={installation}
                       onChange={(e) => setInstallation(e.target.checked)}
-                      className="mt-1 w-5 h-5 text-blue-600 rounded"
+                      className="mt-0.5 w-4 h-4 text-blue-600 rounded"
                     />
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium text-gray-900 flex items-center gap-2">
-                          <Wrench className="w-4 h-4 text-blue-600" />
-                          Instalação Profissional
-                        </span>
-                        <span className="font-bold text-blue-600">
-                          +{formatCurrency(siteConfig.policies.installationPrice)}
-                        </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="font-medium text-gray-900">Instalação</span>
+                        <span className="font-bold text-blue-600 flex-shrink-0">+{formatCurrency(siteConfig.policies.installationPrice)}</span>
                       </div>
-                      <p className="text-sm text-gray-500">Instalação por técnico especializado</p>
                     </div>
                   </label>
                 )}
@@ -379,33 +365,33 @@ export default function ProductPage({ params }: ProductPageProps) {
 
               {/* Total with Extras */}
               {extrasTotal > 0 && (
-                <div className="bg-blue-50 rounded-xl p-4 mb-6">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-700">Subtotal ({quantity}x produto + serviços):</span>
-                    <span className="font-bold text-lg">{formatCurrency(totalPrice)}</span>
+                <div className="bg-blue-50 rounded p-2 mb-3 text-xs">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-gray-700">Total ({quantity}x):</span>
+                    <span className="font-bold">{formatCurrency(totalPrice)}</span>
                   </div>
                   <div className="flex justify-between items-center text-green-700">
-                    <span>No Pix:</span>
-                    <span className="font-bold text-lg">{formatCurrency(totalPixPrice)}</span>
+                    <span>Pix:</span>
+                    <span className="font-bold">{formatCurrency(totalPixPrice)}</span>
                   </div>
                 </div>
               )}
 
               {/* Action Buttons */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <Button
                   onClick={handleBuyNow}
                   disabled={product.stock === 0}
-                  className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-6 text-lg rounded-xl shadow-lg shadow-red-500/25"
+                  className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 text-sm rounded shadow-lg shadow-red-500/25"
                 >
-                  <Zap className="w-5 h-5 mr-2" />
-                  COMPRAR AGORA
+                  <Zap className="w-4 h-4 mr-1" />
+                  COMPRAR
                 </Button>
                 
                 <Button
                   onClick={handleAddToCart}
                   disabled={product.stock === 0}
-                  className={`w-full py-6 text-lg rounded-xl font-bold ${
+                  className={`w-full py-3 text-sm rounded font-bold ${
                     feedback === 'cart'
                       ? 'bg-green-500 hover:bg-green-500 text-white'
                       : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25'
@@ -413,13 +399,13 @@ export default function ProductPage({ params }: ProductPageProps) {
                 >
                   {feedback === 'cart' ? (
                     <>
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      Adicionado ao Carrinho!
+                      <CheckCircle className="w-4 h-4 mr-1 inline" />
+                      Adicionado!
                     </>
                   ) : (
                     <>
-                      <ShoppingCart className="w-5 h-5 mr-2" />
-                      Adicionar ao Carrinho
+                      <ShoppingCart className="w-4 h-4 mr-1 inline" />
+                      Carrinho
                     </>
                   )}
                 </Button>
