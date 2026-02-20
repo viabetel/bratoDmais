@@ -101,10 +101,11 @@ export default function SearchPageContent() {
           </div>
         </div>
 
-        <div className="flex gap-6">
-          <div className="hidden lg:block w-72 flex-shrink-0">
+        <div className="lg:ml-80">
+          {/* Sidebar - Fixed Position */}
+          <div className="hidden lg:block">
             <ProfessionalFilterSidebar
-              onFiltersChange={setFilters}
+              onFilterChange={setFilters}
               isOpen={true}
             />
           </div>
@@ -115,9 +116,9 @@ export default function SearchPageContent() {
                 className="fixed inset-0 bg-black/50 z-30 lg:hidden"
                 onClick={() => setFilterSidebarOpen(false)}
               />
-              <div className="fixed inset-y-0 left-0 w-80 bg-white z-40 lg:hidden overflow-y-auto">
+              <div className="lg:hidden">
                 <ProfessionalFilterSidebar
-                  onFiltersChange={setFilters}
+                  onFilterChange={setFilters}
                   isOpen={filterSidebarOpen}
                   onClose={() => setFilterSidebarOpen(false)}
                 />
