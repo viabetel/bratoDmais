@@ -390,31 +390,6 @@ export function ProfessionalFilterSidebar({
   )
 }
 
-interface FilterSection {
-  id: string
-  title: string
-  icon: string
-  color: string
-}
-
-export function ProfessionalFilterSidebar({
-  currentCategory,
-  onFilterChange,
-  isOpen = true,
-  onClose,
-}: ProfessionalFilterSidebarProps) {
-  const [filters, setFilters] = useState<FiltersState>({
-    priceMin: 0,
-    priceMax: 10000,
-    brands: [],
-    condition: [],
-    categories: currentCategory ? [currentCategory] : [],
-    inStock: false,
-    rating: 0,
-    freeShipping: false,
-  })
-
-  const [expandedSections, setExpandedSections] = useState({
     price: true,
     brands: true,
     condition: false,
