@@ -6,9 +6,8 @@ import Image from 'next/image'
 import { Star, Heart, ShoppingCart, Check, Package, Truck, Eye, Share2, BarChart3 } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cartStore'
 import { useCompareStore } from '@/lib/store/compareStore'
-import { formatBRL, getDiscountPercent, getPixPrice } from '@/lib/utils/format'
-
-interface ProductCardProps {
+import { useFavoritesStore } from '@/lib/store/favoritesStore'
+import { Product } from '@/data/products'
   product: Product
   variant?: 'default' | 'grid' | 'list'
 }
@@ -111,9 +110,20 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
               onError={() => setImageError(true)}
             />
             {discountPercent > 0 && (
-              <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                -{discountPercent}%
-              </div>
+              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+                -{discountPercent}% OFF
+              </span>
+            )}
+            {product.freeShipping && (
+              <span className="bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
+                <Truck className="w-3 h-3" />
+                Frete Grátis
+              </span>
+            )}
+            {product.stock > 0 && product.stock <= 5 && (
+              <span className="bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+                Últimas {product.stock} unidades!
+              </span>
             )}
           </div>
 
@@ -161,9 +171,21 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
               <button
                 onClick={handleAddToCart}
                 disabled={product.stock === 0}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition-all disabled:opacity-50"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm transition-all disabled:opacity-50 flex items-center gap-2 whitespace-nowrap"
               >
-                {product.stock === 0 ? 'Indisponível' : 'Comprar'}
+                {feedback === 'cart' ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Adicionado!
+                  </>
+                ) : product.stock === 0 ? (
+                  'Indisponível'
+                ) : (
+                  <>
+                    <ShoppingCart className="w-4 h-4" />
+                    Comprar
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -198,6 +220,11 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
                 Frete Grátis
               </span>
             )}
+            {product.stock > 0 && product.stock <= 5 && (
+              <span className="bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+                Últimas {product.stock}!
+              </span>
+            )}
           </div>
           
           {/* Action Buttons - Top Right */}
@@ -209,17 +236,19 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
                   ? 'bg-red-500 text-white' 
                   : 'bg-white hover:bg-red-50 text-gray-600 hover:text-red-500'
               }`}
+              aria-label={isFavorite ? 'Remover de favoritos' : 'Adicionar aos favoritos'}
               title={isFavorite ? 'Remover de favoritos' : 'Adicionar aos favoritos'}
             >
-              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} />
+              <Heart className={`w-5 h-5 ${isFavorite ? 'fill-current' : ''}`} aria-hidden="true" />
             </button>
             
             <button
               onClick={handleShare}
               className="p-2 bg-white hover:bg-blue-50 text-gray-600 hover:text-blue-600 rounded-full backdrop-blur-sm transition-all shadow-sm"
+              aria-label="Compartilhar produto"
               title="Compartilhar"
             >
-              <Share2 className="w-5 h-5" />
+              <Share2 className="w-5 h-5" aria-hidden="true" />
             </button>
             
             <button
@@ -229,9 +258,10 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
                   ? 'bg-purple-500 text-white' 
                   : 'bg-white hover:bg-purple-50 text-gray-600 hover:text-purple-600'
               }`}
+              aria-label={isComparing ? 'Remover de comparação' : 'Adicionar à comparação'}
               title={isComparing ? 'Remover de comparação' : 'Adicionar à comparação'}
             >
-              <BarChart3 className="w-5 h-5" />
+              <BarChart3 className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
 
@@ -321,14 +351,14 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
               {feedback === 'cart' ? (
                 <>
                   <Check className="w-5 h-5" />
-                  Adicionado!
+                  Adicionado ao carrinho!
                 </>
               ) : product.stock === 0 ? (
                 'Indisponível'
               ) : (
                 <>
                   <ShoppingCart className="w-5 h-5" />
-                  COMPRAR
+                  COMPRAR AGORA
                 </>
               )}
             </button>

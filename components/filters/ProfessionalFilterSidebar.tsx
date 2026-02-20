@@ -12,9 +12,10 @@ import { getSubcategories, getCategoryBySlug } from '@/lib/utils/categories'
 
 interface ProfessionalFilterSidebarProps {
   currentCategory?: string
-  onFiltersChange: (filters: FiltersState) => void
+  onFilterChange: (filters: FilterState) => void
   isOpen?: boolean
   onClose?: () => void
+  isMobile?: boolean
 }
 
 export interface FiltersState {

@@ -7,23 +7,27 @@ import Link from 'next/link'
 const faqItems = [
   {
     question: 'Qual é o prazo de entrega?',
-    answer: 'Entregamos em até 7 dias úteis para a maioria das regiões. Frete grátis em compras acima de R$ 299. Escolha o frete expresso no carrinho se preferir mais rapidez.',
+    answer: 'Entregamos em até 7 dias úteis para a maioria das regiões. Frete grátis em compras acima de R$ 299. Escolha o frete expresso se preferir receber em 2-3 dias úteis.',
   },
   {
     question: 'Posso parcelar minha compra?',
-    answer: 'Sim! Oferecemos até 12x sem juros no crédito e 10% de desconto no Pix à vista. Confira as condições no carrinho.',
+    answer: 'Sim! Oferecemos até 12x sem juros no cartão de crédito. Além disso, aproveite 10% de desconto ao pagar via Pix à vista. Sem taxa de administração em nenhuma opção.',
   },
   {
     question: 'E se o produto chegar com defeito?',
-    answer: 'Todos os produtos têm garantia de 12 meses. Se chegar com defeito, fazemos troca ou reembolso imediato. Basta entrar em contato pelo WhatsApp.',
+    answer: 'Temos garantia de 12 meses em todos os produtos. Se chegar com defeito, oferecemos troca gratuitamente ou reembolso integral em até 5 dias úteis.',
   },
   {
     question: 'Como faço para rastrear meu pedido?',
-    answer: 'Você recebe um código de rastreamento por email assim que o produto sai do nosso estoque. Pode acompanhar pelo seu perfil ou clicando no link que enviamos.',
+    answer: 'Você recebe um código de rastreamento por email assim que o produto sai do estoque. Pode acompanhar em tempo real pelo seu perfil na Brato Mais ou no site da transportadora.',
   },
   {
     question: 'Qual é o horário de atendimento?',
-    answer: 'Estamos disponíveis de segunda a sexta, das 08h às 18h (horário de Brasília) pelo WhatsApp e email. Nos fins de semana respondemos com até 24 horas.',
+    answer: 'Atendimento de segunda a sexta, das 08h às 18h (Brasília). Nos finais de semana, respondemos com até 24 horas. Contato via WhatsApp, email e chat ao vivo.',
+  },
+  {
+    question: 'Existe alternativa ao frete?',
+    answer: 'Sim! Você pode retirar na loja sem taxas de frete. Compre online e retire no mesmo dia em nossa unidade. Confira a disponibilidade de produtos para retirada ao finalizar a compra.',
   },
 ]
 

@@ -48,17 +48,17 @@ export function CategoriesGrid() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-4">
           {categories.map((cat) => {
             const Icon = cat.icon
             return (
               <Link key={cat.title} href={cat.href}>
-                <div className={`bg-gradient-to-br ${cat.bg} rounded-xl p-6 text-white cursor-pointer transition-all hover:shadow-lg hover:scale-105 group border border-white/20`}>
-                  <div className="mb-3 inline-block p-3 bg-white/20 rounded-lg group-hover:bg-white/30 transition">
-                    <Icon className="w-6 h-6" />
+                <div className={`bg-gradient-to-br ${cat.bg} rounded-lg sm:rounded-xl p-4 sm:p-6 text-white cursor-pointer transition-all hover:shadow-lg hover:scale-105 group border border-white/20`}>
+                  <div className="mb-2 sm:mb-3 inline-block p-2 sm:p-3 bg-white/20 rounded-lg group-hover:bg-white/30 transition">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
-                  <h3 className="font-bold text-lg mb-1">{cat.title}</h3>
-                  <p className="text-sm text-white/80 mb-3">{cat.count} produtos</p>
+                  <h3 className="font-bold text-base sm:text-lg mb-1">{cat.title}</h3>
+                  <p className="text-xs sm:text-sm text-white/80 mb-2 sm:mb-3">{cat.count} produtos</p>
                   <span className="inline-flex items-center gap-1 text-xs font-semibold opacity-0 group-hover:opacity-100 transition">
                     Ver <ArrowRight className="w-3 h-3" />
                   </span>
