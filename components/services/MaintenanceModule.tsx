@@ -1,0 +1,102 @@
+'use client'
+
+import { useState } from 'react'
+import { Wrench, Clock, CheckCircle, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { getServicesByCategory, formatServicePrice, Service } from '@/data/services'
+import { formatCurrency } from '@/lib/config'
+
+interface MaintenanceModuleProps {
+  categorySlug: string
+  productName: string
+  onSelect?: (serviceId: string, serviceType: 'maintenance' | 'plan') => void
+}
+
+export function MaintenanceModule({ categorySlug, productName, onSelect }: MaintenanceModuleProps) {
+  const [expanded, setExpanded] = useState(false)
+  const [selectedService, setSelectedService] = useState<string | null>(null)
+
+  const maintenanceServices = getServicesByCategory(categorySlug, 'maintenance')
+  if (maintenanceServices.length === 0) {
+    return null
+  }
+
+  const handleSelectService = (serviceId: string) => {
+    setSelectedService(serviceId)
+    onSelect?.(serviceId, 'maintenance')
+  }
+
+  return (
+    <div className="border-t border-gray-200 pt-4 mt-4">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between py-3 rounded-lg hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          <Wrench className="w-5 h-5 text-blue-600" />
+          <span className="font-semibold text-gray-900">Manutenção & Proteção</span>
+        </div>
+        {expanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+      </button>
+
+      {expanded && (
+        <div className="mt-4 space-y-3 bg-blue-50 rounded-lg p-4">
+          {maintenanceServices.map((service) => (
+            <div
+              key={service.id}
+              onClick={() => handleSelectService(service.id)}
+              className={`p-3 border rounded-lg cursor-pointer transition-all ${
+                selectedService === service.id
+                  ? 'border-blue-500 bg-blue-100'
+                  : 'border-gray-200 bg-white hover:border-blue-300'
+              }`}
+            >
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900">{service.name}</h4>
+                  <p className="text-xs text-gray-600 mt-0.5">{service.description}</p>
+                </div>
+                <span className="font-bold text-blue-600 text-sm whitespace-nowrap ml-2">
+                  {formatServicePrice(service)}
+                </span>
+              </div>
+
+              {service.features && service.features.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {service.features.slice(0, 2).map((feature, idx) => (
+                    <span
+                      key={idx}
+                      className="text-xs bg-white text-gray-700 px-2 py-1 rounded border border-gray-200"
+                    >
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {selectedService === service.id && (
+                <div className="mt-2 pt-2 border-t border-blue-200">
+                  <Button
+                    size="sm"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      // Handle scheduling or adding to cart
+                    }}
+                  >
+                    {service.schedulingEnabled ? 'Agendar Serviço' : 'Adicionar'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <div className="text-xs text-gray-600 bg-white rounded p-2 mt-3 flex items-start gap-2">
+            <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+            <span>Serviços disponíveis na sua região após confirmação de endereço</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

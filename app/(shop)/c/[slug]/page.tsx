@@ -147,6 +147,11 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
           {/* Main Content */}
           <div className="flex-1 min-w-0">
+            {/* Service Mode Selector */}
+            <div className="mb-4 flex justify-center">
+              <ServiceModeSelector currentMode={mode} onModeChange={handleModeChange} />
+            </div>
+
             {/* Toolbar */}
             <div className="flex items-center justify-between gap-4 mb-6 bg-white rounded-xl border border-gray-200/80 px-4 py-3 shadow-sm">
               <div className="flex items-center gap-3">
