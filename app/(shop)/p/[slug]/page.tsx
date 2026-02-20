@@ -13,9 +13,9 @@ import { products } from '@/data/products'
 import { getServicesByType } from '@/data/services'
 import { useCartStore } from '@/lib/store/cartStore'
 import { useFavoritesStore } from '@/lib/store/favoritesStore'
-// import { InstallationModule } from '@/components/services/InstallationModule'
-// import { MaintenanceModule } from '@/components/services/MaintenanceModule'
-// import { RentalModule } from '@/components/services/RentalModule'
+import { InstallationModule } from '@/components/services/InstallationModule'
+import { MaintenanceModule } from '@/components/services/MaintenanceModule'
+import { RentalModule } from '@/components/services/RentalModule'
 import { ProductCard } from '@/components/products/ProductCard'
 import { siteConfig, formatCurrency, calcPixPrice, calcInstallments, calcShipping } from '@/lib/config'
 
@@ -542,17 +542,57 @@ export default function ProductPage({ params }: ProductPageProps) {
           </div>
         </div>
 
-        {/* Service Modules - SIMPLIFIED FOR DEBUGGING */}
-        {product && (
-          <div className="mt-12 space-y-6 bg-gray-50 p-6 rounded-xl border-2 border-dashed border-gray-300">
-            <p className="text-sm font-bold text-gray-600">Serviços disponíveis para este produto:</p>
-            <ul className="text-sm text-gray-700 space-y-2">
-              <li>✓ Instalação profissional</li>
-              <li>✓ Manutenção e proteção</li>
-              <li>✓ Aluguel/Alocação</li>
-            </ul>
-          </div>
-        )}
+        {/* Service Modules */}
+        <div className="mt-12 space-y-6">
+          {/* Installation Module */}
+          {['geladeiras', 'maquinas-lavar', 'ar-condicionado', 'tvs', 'climatizacao'].includes(product.categorySlug) && (
+            <InstallationModule 
+              categorySlug={product.categorySlug}
+              productName={product.name}
+              basePrice={product.price}
+              onSelect={(service) => {
+                setSelectedServices([...selectedServices, {
+                  serviceId: service.id,
+                  serviceName: service.name,
+                  servicePrice: service.price,
+                  serviceType: 'installation'
+                }])
+              }}
+            />
+          )}
+
+          {/* Maintenance Module */}
+          {['geladeiras', 'ar-condicionado', 'maquinas-lavar', 'climatizacao'].includes(product.categorySlug) && (
+            <MaintenanceModule 
+              categorySlug={product.categorySlug}
+              productName={product.name}
+              onSelect={(service) => {
+                setSelectedServices([...selectedServices, {
+                  serviceId: service.id,
+                  serviceName: service.name,
+                  servicePrice: service.price,
+                  serviceType: 'maintenance'
+                }])
+              }}
+            />
+          )}
+
+          {/* Rental Module */}
+          {['geladeiras', 'maquinas-lavar', 'ar-condicionado', 'climatizacao', 'tvs', 'notebooks', 'smartphones'].includes(product.categorySlug) && (
+            <RentalModule 
+              productId={product.id}
+              productName={product.name}
+              onSelect={(service) => {
+                setSelectedServices([...selectedServices, {
+                  serviceId: service.id,
+                  serviceName: service.name,
+                  servicePrice: service.price,
+                  serviceType: 'rental'
+                }])
+              }}
+            />
+          )}
+        </div>
 
         {/* Description & Specs */}
         <div className="mt-12 grid lg:grid-cols-2 gap-8">

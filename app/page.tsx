@@ -1,10 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Truck, Shield, CreditCard, Zap, Flame, Refrigerator, Microwave, Droplets, Star, Award, Headset, Banknote, ChevronRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Truck, Shield, CreditCard, Zap, Flame, Refrigerator, Microwave, Droplets, Star, Award, Headset, Banknote, ChevronRight, Sparkles, Wrench, Calendar, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { products } from '@/data/products'
+import { getServicesByType } from '@/data/services'
 import { ProductCard } from '@/components/products/ProductCard'
+import { ServiceCard } from '@/components/services/ServiceCard'
 import { HeroSection } from '@/components/home/HeroSection'
 import { TrustBanner } from '@/components/home/TrustBanner'
 import { CategoriesGrid } from '@/components/home/CategoriesGrid'
@@ -60,6 +62,11 @@ export default function Home() {
   const ate199 = getAtePrix(199)
   const ate499 = getAtePrix(499)
   const ate999 = getAtePrix(999)
+  const servicesDestaque = [
+    ...getServicesByType('installation'),
+    ...getServicesByType('maintenance'),
+    ...getServicesByType('rental'),
+  ].slice(0, 6)
 
   return (
     <div className="min-h-screen bg-white">
@@ -113,6 +120,51 @@ export default function Home() {
         badge="bestseller"
         hideTitle={true}
       />
+
+      {/* Ofertas Imperdíveis - Services Section */}
+      <section className="py-12 md:py-16 bg-gradient-to-r from-blue-600 to-blue-700">
+        <div className="container mx-auto px-4">
+          <div className="flex items-start justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="w-5 h-5 text-yellow-300" />
+                <span className="text-sm font-bold text-blue-100 uppercase tracking-wide">Serviços Exclusivos</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-black text-white text-balance">
+                Ofertas Imperdíveis!
+              </h2>
+              <p className="text-blue-100 mt-2 max-w-2xl">
+                Até 80% de desconto em produtos selecionados
+              </p>
+            </div>
+            <Link href="/c/climatizacao?mode=rent" className="hidden md:block">
+              <Button className="bg-white hover:bg-blue-50 text-blue-600 font-bold px-6">
+                Ver Ofertas <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+
+          {/* Services Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {servicesDestaque.map((service) => (
+              <ServiceCard
+                key={service.id}
+                service={service}
+                isRental={service.type === 'rental'}
+              />
+            ))}
+          </div>
+
+          {/* Mobile CTA */}
+          <div className="md:hidden mt-6">
+            <Link href="/c/climatizacao?mode=rent" className="block">
+              <Button className="w-full bg-white hover:bg-blue-50 text-blue-600 font-bold py-3">
+                Ver Todas as Ofertas <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* Price Ranges Banner */}
       <section className="py-6 md:py-8">
