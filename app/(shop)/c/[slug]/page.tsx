@@ -2,10 +2,13 @@
 
 import { useState, useMemo, use } from 'react'
 import Link from 'next/link'
-import { Grid3x3, List, Menu } from 'lucide-react'
+import { Grid3x3, List, SlidersHorizontal, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/products/ProductCard'
-import { ProfessionalFilterSidebar, FiltersState } from '@/components/filters/ProfessionalFilterSidebar'
+import {
+  ProfessionalFilterSidebar,
+  FiltersState,
+} from '@/components/filters/ProfessionalFilterSidebar'
 import { products } from '@/data/products'
 import { categories } from '@/data/categories'
 import { getCategoryBySlug } from '@/lib/utils/categories'
@@ -18,7 +21,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = use(params)
   const [layout, setLayout] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('relevancia')
-  const [filterSidebarOpen, setFilterSidebarOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const [filters, setFilters] = useState<FiltersState>({
     priceMin: 0,
     priceMax: 10000,
@@ -30,36 +33,20 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     freeShipping: false,
   })
 
-  // Encontra a categoria
   const categoryData = getCategoryBySlug(slug)
 
   const filteredProducts = useMemo(() => {
     let result = products.filter((p) => {
-      // Filtro de categorias
       if (!filters.categories.includes(p.categorySlug)) return false
-      
-      // Filtro de marcas
       if (filters.brands.length > 0 && !filters.brands.includes(p.brand)) return false
-      
-      // Filtro de condição
       if (filters.condition.length > 0 && !filters.condition.includes(p.condition)) return false
-      
-      // Filtro de preço
       if (p.price < filters.priceMin || p.price > filters.priceMax) return false
-      
-      // Filtro de estoque
       if (filters.inStock && p.stock === 0) return false
-      
-      // Filtro de frete grátis
       if (filters.freeShipping && p.freeShipping !== true) return false
-      
-      // Filtro de avaliação
       if (filters.rating > 0 && p.rating < filters.rating) return false
-      
       return true
     })
 
-    // Ordenação
     switch (sortBy) {
       case 'maior-preco':
         return result.sort((a, b) => b.price - a.price)
@@ -67,9 +54,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
         return result.sort((a, b) => a.price - b.price)
       case 'maior-desconto':
         return result.sort((a, b) => {
-          const discountA = ((a.originalPrice - a.price) / a.originalPrice) * 100
-          const discountB = ((b.originalPrice - b.price) / b.originalPrice) * 100
-          return discountB - discountA
+          const dA = ((a.originalPrice - a.price) / a.originalPrice) * 100
+          const dB = ((b.originalPrice - b.price) / b.originalPrice) * 100
+          return dB - dA
         })
       case 'melhor-avaliacao':
         return result.sort((a, b) => b.rating - a.rating)
@@ -81,25 +68,22 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   if (!categoryData) {
     return (
       <main className="container mx-auto px-4 py-12">
-        <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl font-black text-gray-900 mb-4">Categoria não encontrada</h1>
-          <p className="text-gray-600 text-lg mb-8">A categoria que você está procurando não existe. Confira nossas categorias principais:</p>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+        <div className="text-center max-w-lg mx-auto">
+          <h1 className="text-2xl font-bold text-gray-900 mb-3">Categoria não encontrada</h1>
+          <p className="text-sm text-gray-600 mb-6">Confira nossas categorias:</p>
+          <div className="grid grid-cols-2 gap-3 mb-6">
             {categories.slice(0, 6).map((cat) => (
               <Link
                 key={cat.id}
                 href={`/c/${cat.slug}`}
-                className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg hover:shadow-lg transition-all hover:scale-105 border border-blue-200"
+                className="p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100"
               >
-                <span className="block text-lg font-bold text-blue-600 mb-1">{cat.name}</span>
-                <span className="text-xs text-gray-600">{cat.description?.slice(0, 40)}</span>
+                <span className="text-sm font-semibold text-blue-700">{cat.name}</span>
               </Link>
             ))}
           </div>
-          
           <Link href="/busca">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white">
+            <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
               Ver Todos os Produtos
             </Button>
           </Link>
@@ -109,76 +93,58 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm mb-6">
-          <Link href="/" className="text-blue-600 hover:underline">
-            Home
-          </Link>
-          <span className="text-gray-400">/</span>
-          <span className="font-semibold text-gray-900">{categoryData.name}</span>
-        </div>
-
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-black text-gray-900 mb-2">{categoryData.name}</h1>
-          <p className="text-gray-600 mb-4">{categoryData.description}</p>
-          <p className="text-sm font-medium text-gray-500">{filteredProducts.length} produtos encontrados</p>
-        </div>
-
-        <div className="flex gap-6">
-          {/* Sidebar - Desktop + Mobile Overlay */}
-          <div className="hidden lg:block w-72 flex-shrink-0">
-            <ProfessionalFilterSidebar
-              currentCategory={slug}
-              onFiltersChange={setFilters}
-              isOpen={true}
-            />
+    <main className="min-h-screen bg-gray-50/50">
+      <div className="container mx-auto px-4 py-6">
+        {/* Breadcrumb + Title */}
+        <div className="mb-6">
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-3">
+            <Link href="/" className="hover:text-blue-600 transition-colors">Home</Link>
+            <span>/</span>
+            <span className="text-gray-800 font-medium">{categoryData.name}</span>
           </div>
+          <h1 className="text-2xl font-bold text-gray-900">{categoryData.name}</h1>
+          <p className="text-sm text-gray-500 mt-1">
+            {categoryData.description} - {filteredProducts.length} produto{filteredProducts.length !== 1 ? 's' : ''}
+          </p>
+        </div>
 
-          {/* Mobile Filter Button + Products */}
-          <div className="w-full flex-1">
-            {/* Mobile Toolbar */}
-            <div className="lg:hidden flex items-center gap-2 mb-6">
-              <Button
-                onClick={() => setFilterSidebarOpen(true)}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Menu className="w-4 h-4" />
-                Filtros
-              </Button>
-            </div>
+        {/* Layout: Sidebar + Content */}
+        <div className="flex gap-6 items-start">
+          {/* Desktop Sidebar */}
+          <ProfessionalFilterSidebar
+            currentCategory={slug}
+            onFilterChange={setFilters}
+            isOpen={true}
+          />
 
-            {/* Mobile Filter Drawer */}
-            {filterSidebarOpen && (
-              <>
-                <div
-                  className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-                  onClick={() => setFilterSidebarOpen(false)}
-                />
-                <div className="fixed inset-y-0 left-0 w-80 bg-white z-40 lg:hidden overflow-y-auto">
-                  <ProfessionalFilterSidebar
-                    currentCategory={slug}
-                    onFiltersChange={setFilters}
-                    isOpen={filterSidebarOpen}
-                    onClose={() => setFilterSidebarOpen(false)}
-                  />
-                </div>
-              </>
-            )}
+          {/* Mobile Sidebar */}
+          <ProfessionalFilterSidebar
+            currentCategory={slug}
+            onFilterChange={setFilters}
+            isOpen={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+          />
 
-            {/* Products Section */}
-            <div className="space-y-6">
-              {/* Toolbar */}
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-gray-200 gap-4">
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                  <span className="text-sm text-gray-600 whitespace-nowrap">Ordenar por:</span>
+          {/* Main Content */}
+          <div className="flex-1 min-w-0">
+            {/* Toolbar */}
+            <div className="flex items-center justify-between gap-4 mb-6 bg-white rounded-xl border border-gray-200/80 px-4 py-3 shadow-sm">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="lg:hidden"
+                  onClick={() => setMobileOpen(true)}
+                >
+                  <SlidersHorizontal className="w-3.5 h-3.5 mr-1.5" />
+                  Filtros
+                </Button>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500 hidden sm:inline">Ordenar:</span>
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white flex-1 sm:flex-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                   >
                     <option value="relevancia">Relevância</option>
                     <option value="menor-preco">Menor Preço</option>
@@ -187,67 +153,74 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                     <option value="melhor-avaliacao">Melhor Avaliação</option>
                   </select>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant={layout === 'grid' ? 'default' : 'outline'}
-                    onClick={() => setLayout('grid')}
-                    className="px-2"
-                  >
-                    <Grid3x3 className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant={layout === 'list' ? 'default' : 'outline'}
-                    onClick={() => setLayout('list')}
-                    className="px-2"
-                  >
-                    <List className="w-4 h-4" />
-                  </Button>
-                </div>
               </div>
-
-              {/* Products Grid/List */}
-              {filteredProducts.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-600 mb-6">Nenhum produto encontrado com os filtros selecionados</p>
-                  <Button
-                    onClick={() =>
-                      setFilters({
-                        priceMin: 0,
-                        priceMax: 10000,
-                        brands: [],
-                        condition: [],
-                        categories: [slug],
-                        inStock: false,
-                        rating: 0,
-                        freeShipping: false,
-                      })
-                    }
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    Limpar Filtros
-                  </Button>
-                </div>
-              ) : (
-                <div
-                  className={
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setLayout('grid')}
+                  className={`p-1.5 rounded-md transition-colors ${
                     layout === 'grid'
-                      ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
-                      : 'space-y-4'
-                  }
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
-                  {filteredProducts.map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      variant={layout === 'list' ? 'list' : 'grid'}
-                    />
-                  ))}
-                </div>
-              )}
+                  <Grid3x3 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => setLayout('list')}
+                  className={`p-1.5 rounded-md transition-colors ${
+                    layout === 'list'
+                      ? 'bg-blue-600 text-white'
+                      : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <List className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
+
+            {/* Products */}
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
+                <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                <p className="text-sm text-gray-600 mb-4">
+                  Nenhum produto encontrado com os filtros selecionados
+                </p>
+                <Button
+                  size="sm"
+                  onClick={() =>
+                    setFilters({
+                      priceMin: 0,
+                      priceMax: 10000,
+                      brands: [],
+                      condition: [],
+                      categories: [slug],
+                      inStock: false,
+                      rating: 0,
+                      freeShipping: false,
+                    })
+                  }
+                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Limpar Filtros
+                </Button>
+              </div>
+            ) : (
+              <div
+                className={
+                  layout === 'grid'
+                    ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
+                    : 'space-y-3'
+                }
+              >
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    variant={layout === 'list' ? 'list' : 'grid'}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

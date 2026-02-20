@@ -1,10 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, X, Filter, RotateCcw } from 'lucide-react'
+import { ChevronDown, X, SlidersHorizontal, RotateCcw, Truck, Star } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider'
-import { Button } from '@/components/ui/button'
 import { products } from '@/data/products'
 
 export interface FiltersState {
@@ -25,6 +24,53 @@ interface ProfessionalFilterSidebarProps {
   onClose?: () => void
 }
 
+function FilterSection({
+  title,
+  color,
+  count,
+  expanded,
+  onToggle,
+  children,
+}: {
+  title: string
+  color: string
+  count?: number
+  expanded: boolean
+  onToggle: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between py-2 group"
+      >
+        <span className="flex items-center gap-2.5 text-sm font-semibold text-gray-800 group-hover:text-blue-600 transition-colors">
+          <span className={`w-1.5 h-1.5 rounded-full ${color}`} />
+          {title}
+          {count !== undefined && count > 0 && (
+            <span className="text-[10px] bg-blue-600 text-white w-4 h-4 rounded-full flex items-center justify-center font-bold">
+              {count}
+            </span>
+          )}
+        </span>
+        <ChevronDown
+          className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${
+            expanded ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+      <div
+        className={`overflow-hidden transition-all duration-200 ${
+          expanded ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  )
+}
+
 export function ProfessionalFilterSidebar({
   currentCategory,
   onFilterChange,
@@ -42,33 +88,36 @@ export function ProfessionalFilterSidebar({
     freeShipping: false,
   })
 
-  const [expandedSections, setExpandedSections] = useState({
+  const [sections, setSections] = useState({
     price: true,
     brands: true,
     condition: false,
     rating: false,
+    shipping: false,
   })
 
-  const uniqueBrands = [...new Set(products.map(p => p.brand))].sort()
+  const uniqueBrands = [...new Set(products.map((p) => p.brand))].sort()
+
   const activeCount = [
     ...filters.brands,
     ...filters.condition,
-    ...filters.categories,
-    filters.inStock ? 'inStock' : null,
-    filters.freeShipping ? 'freeShipping' : null,
-    filters.rating > 0 ? 'rating' : null,
+    filters.inStock ? 'x' : null,
+    filters.freeShipping ? 'x' : null,
+    filters.rating > 0 ? 'x' : null,
+    filters.priceMin > 0 ? 'x' : null,
+    filters.priceMax < 10000 ? 'x' : null,
   ].filter(Boolean).length
 
-  const toggleSection = (section: keyof typeof expandedSections) => {
-    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))
+  const toggle = (key: keyof typeof sections) =>
+    setSections((s) => ({ ...s, [key]: !s[key] }))
+
+  const update = (patch: Partial<FiltersState>) => {
+    const next = { ...filters, ...patch }
+    setFilters(next)
+    onFilterChange(next)
   }
 
-  const handleFilterUpdate = (newFilters: FiltersState) => {
-    setFilters(newFilters)
-    onFilterChange(newFilters)
-  }
-
-  const handleClearAll = () => {
+  const clearAll = () => {
     const cleared: FiltersState = {
       priceMin: 0,
       priceMax: 10000,
@@ -83,264 +132,257 @@ export function ProfessionalFilterSidebar({
     onFilterChange(cleared)
   }
 
-  return (
-    <>
-      {/* Overlay for mobile */}
-      {isOpen && onClose && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-30 lg:hidden"
-          onClick={onClose}
-        />
-      )}
-
-      {/* Sidebar - FIXED and FLOATING */}
-      <aside
-        className={`fixed left-0 top-0 w-80 h-screen bg-white/95 backdrop-blur-md z-40 shadow-2xl border-r border-gray-200/50 overflow-hidden transition-transform duration-300 lg:translate-x-0 ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        {/* Header - Gradient with glassmorphism */}
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-6 z-10 shadow-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-                <Filter className="w-5 h-5" />
-              </div>
-              <h2 className="font-bold text-xl">Filtros</h2>
+  const sidebarContent = (
+    <div className="flex flex-col h-full">
+      {/* Header */}
+      <div className="flex-shrink-0 px-5 py-4 border-b border-gray-100 bg-white">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              <SlidersHorizontal className="w-4 h-4 text-white" />
             </div>
-            {onClose && (
-              <button
-                onClick={onClose}
-                className="lg:hidden p-2 hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm"
-                aria-label="Fechar filtros"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
+            <div>
+              <h2 className="text-sm font-bold text-gray-900">Filtros</h2>
+              {activeCount > 0 && (
+                <p className="text-[11px] text-blue-600 font-medium">
+                  {activeCount} ativo{activeCount > 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
           </div>
-          {activeCount > 0 && (
-            <div className="flex items-center justify-between text-sm bg-white/20 rounded-lg p-2 backdrop-blur-sm">
-              <span className="font-semibold">{activeCount} filtro(s) ativo(s)</span>
+          <div className="flex items-center gap-2">
+            {activeCount > 0 && (
               <button
-                onClick={handleClearAll}
-                className="flex items-center gap-1 hover:bg-white/20 px-2 py-1 rounded transition text-xs font-bold"
+                onClick={clearAll}
+                className="text-[11px] text-red-500 hover:text-red-700 font-semibold flex items-center gap-1 transition-colors"
               >
                 <RotateCcw className="w-3 h-3" />
                 Limpar
               </button>
-            </div>
-          )}
-        </div>
-
-        {/* Scrollable Content with padding */}
-        <div className="overflow-y-auto h-[calc(100vh-180px)] px-6 py-4 space-y-6 scrollbar-thin scrollbar-thumb-gray-300/50 scrollbar-track-transparent">
-          
-          {/* PRICE FILTER */}
-          <div className="space-y-3">
-            <button
-              onClick={() => toggleSection('price')}
-              className="w-full flex items-center justify-between group"
-            >
-              <span className="flex items-center gap-3 font-bold text-gray-900 text-base">
-                <span className="w-2 h-2 rounded-full bg-gradient-to-r from-green-400 to-emerald-500"></span>
-                Preço
-              </span>
-              <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${expandedSections.price ? 'rotate-180' : ''}`} />
-            </button>
-            {expandedSections.price && (
-              <div className="space-y-4 pl-5">
-                <Slider
-                  value={[filters.priceMin, filters.priceMax]}
-                  onValueChange={(values) => handleFilterUpdate({ ...filters, priceMin: values[0], priceMax: values[1] })}
-                  min={0}
-                  max={10000}
-                  step={100}
-                  className="w-full"
-                />
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 border border-green-200/50">
-                    <span className="text-xs text-gray-600 font-medium">Mínimo</span>
-                    <p className="font-bold text-green-700 text-base">R$ {filters.priceMin}</p>
-                  </div>
-                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 border border-green-200/50">
-                    <span className="text-xs text-gray-600 font-medium">Máximo</span>
-                    <p className="font-bold text-green-700 text-base">R$ {filters.priceMax}</p>
-                  </div>
-                </div>
-              </div>
             )}
-          </div>
-
-          <div className="border-t border-gray-100"></div>
-
-          {/* BRANDS FILTER */}
-          <div className="space-y-3">
-            <button
-              onClick={() => toggleSection('brands')}
-              className="w-full flex items-center justify-between group"
-            >
-              <span className="flex items-center gap-3 font-bold text-gray-900 text-base">
-                <span className="w-2 h-2 rounded-full bg-gradient-to-r from-orange-400 to-red-500"></span>
-                Marcas
-                {filters.brands.length > 0 && (
-                  <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">
-                    {filters.brands.length}
-                  </span>
-                )}
-              </span>
-              <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${expandedSections.brands ? 'rotate-180' : ''}`} />
-            </button>
-            {expandedSections.brands && (
-              <div className="space-y-2 pl-5 max-h-52 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300/50">
-                {uniqueBrands.map(brand => (
-                  <label key={brand} className="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 p-2 rounded-lg transition">
-                    <Checkbox
-                      checked={filters.brands.includes(brand)}
-                      onCheckedChange={() => {
-                        const newBrands = filters.brands.includes(brand)
-                          ? filters.brands.filter(b => b !== brand)
-                          : [...filters.brands, brand]
-                        handleFilterUpdate({ ...filters, brands: newBrands })
-                      }}
-                      className="border-2 group-hover:border-orange-500 transition"
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-orange-600 font-medium transition">
-                      {brand}
-                    </span>
-                  </label>
-                ))}
-              </div>
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="lg:hidden p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label="Fechar filtros"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
             )}
-          </div>
-
-          <div className="border-t border-gray-100"></div>
-
-          {/* CONDITION FILTER */}
-          <div className="space-y-3">
-            <button
-              onClick={() => toggleSection('condition')}
-              className="w-full flex items-center justify-between group"
-            >
-              <span className="flex items-center gap-3 font-bold text-gray-900 text-base">
-                <span className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-pink-500"></span>
-                Condição
-                {filters.condition.length > 0 && (
-                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full font-bold">
-                    {filters.condition.length}
-                  </span>
-                )}
-              </span>
-              <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${expandedSections.condition ? 'rotate-180' : ''}`} />
-            </button>
-            {expandedSections.condition && (
-              <div className="space-y-2 pl-5">
-                {[{ value: 'novo', label: 'Novo' }, { value: 'seminovo', label: 'Seminovo' }].map(cond => (
-                  <label key={cond.value} className="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 p-2 rounded-lg transition">
-                    <Checkbox
-                      checked={filters.condition.includes(cond.value)}
-                      onCheckedChange={() => {
-                        const newConditions = filters.condition.includes(cond.value)
-                          ? filters.condition.filter(c => c !== cond.value)
-                          : [...filters.condition, cond.value]
-                        handleFilterUpdate({ ...filters, condition: newConditions })
-                      }}
-                      className="border-2 group-hover:border-purple-500 transition"
-                    />
-                    <span className="text-sm text-gray-700 group-hover:text-purple-600 font-medium transition">
-                      {cond.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="border-t border-gray-100"></div>
-
-          {/* RATING FILTER */}
-          <div className="space-y-3">
-            <button
-              onClick={() => toggleSection('rating')}
-              className="w-full flex items-center justify-between group"
-            >
-              <span className="flex items-center gap-3 font-bold text-gray-900 text-base">
-                <span className="w-2 h-2 rounded-full bg-gradient-to-r from-yellow-400 to-amber-500"></span>
-                Avaliação
-              </span>
-              <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${expandedSections.rating ? 'rotate-180' : ''}`} />
-            </button>
-            {expandedSections.rating && (
-              <div className="space-y-2 pl-5">
-                {[5, 4, 3].map(rating => (
-                  <button
-                    key={rating}
-                    onClick={() => handleFilterUpdate({ ...filters, rating: filters.rating === rating ? 0 : rating })}
-                    className={`w-full text-left p-3 rounded-lg transition flex items-center gap-2 ${
-                      filters.rating === rating
-                        ? 'bg-gradient-to-r from-yellow-100 to-amber-100 border border-yellow-300 shadow-sm'
-                        : 'hover:bg-gray-50 border border-transparent'
-                    }`}
-                  >
-                    <span className="flex gap-0.5">
-                      {[...Array(rating)].map((_, i) => (
-                        <span key={i} className="text-yellow-400 text-lg">★</span>
-                      ))}
-                    </span>
-                    <span className={`text-sm font-medium ${filters.rating === rating ? 'text-yellow-800' : 'text-gray-700'}`}>
-                      {rating}+ estrelas
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="border-t border-gray-100"></div>
-
-          {/* SHIPPING & STOCK */}
-          <div className="space-y-3">
-            <span className="flex items-center gap-3 font-bold text-gray-900 text-base">
-              <span className="w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500"></span>
-              Entrega
-            </span>
-            <div className="space-y-2 pl-5">
-              <label className="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 p-2 rounded-lg transition">
-                <Checkbox
-                  checked={filters.freeShipping}
-                  onCheckedChange={() => handleFilterUpdate({ ...filters, freeShipping: !filters.freeShipping })}
-                  className="border-2 group-hover:border-blue-500 transition"
-                />
-                <span className="text-sm text-gray-700 group-hover:text-blue-600 font-medium transition">
-                  Frete Grátis
-                </span>
-              </label>
-              <label className="flex items-center gap-3 cursor-pointer group hover:bg-gray-50 p-2 rounded-lg transition">
-                <Checkbox
-                  checked={filters.inStock}
-                  onCheckedChange={() => handleFilterUpdate({ ...filters, inStock: !filters.inStock })}
-                  className="border-2 group-hover:border-blue-500 transition"
-                />
-                <span className="text-sm text-gray-700 group-hover:text-blue-600 font-medium transition">
-                  Apenas em estoque
-                </span>
-              </label>
-            </div>
           </div>
         </div>
+      </div>
 
-        {/* Footer - Absolute at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent border-t border-gray-200/50 px-6 py-4 backdrop-blur-sm">
-          <Button 
-            onClick={handleClearAll}
-            variant="outline"
-            className="w-full font-bold border-2 hover:border-red-500 hover:bg-red-50 hover:text-red-600 transition-all"
-            disabled={activeCount === 0}
+      {/* Scrollable filters */}
+      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+        {/* Price */}
+        <FilterSection
+          title="Faixa de Preço"
+          color="bg-emerald-500"
+          expanded={sections.price}
+          onToggle={() => toggle('price')}
+        >
+          <div className="space-y-3 pl-4">
+            <Slider
+              value={[filters.priceMin, filters.priceMax]}
+              onValueChange={(v) => update({ priceMin: v[0], priceMax: v[1] })}
+              min={0}
+              max={10000}
+              step={100}
+            />
+            <div className="flex gap-2">
+              <div className="flex-1 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
+                <span className="text-[10px] text-gray-500 block">Min</span>
+                <span className="text-xs font-bold text-gray-900">
+                  R$ {filters.priceMin.toLocaleString('pt-BR')}
+                </span>
+              </div>
+              <div className="flex-1 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
+                <span className="text-[10px] text-gray-500 block">Max</span>
+                <span className="text-xs font-bold text-gray-900">
+                  R$ {filters.priceMax.toLocaleString('pt-BR')}
+                </span>
+              </div>
+            </div>
+          </div>
+        </FilterSection>
+
+        <hr className="border-gray-100" />
+
+        {/* Brands */}
+        <FilterSection
+          title="Marcas"
+          color="bg-orange-500"
+          count={filters.brands.length}
+          expanded={sections.brands}
+          onToggle={() => toggle('brands')}
+        >
+          <div className="space-y-1 pl-4 max-h-44 overflow-y-auto">
+            {uniqueBrands.map((brand) => (
+              <label
+                key={brand}
+                className="flex items-center gap-2.5 cursor-pointer py-1.5 px-2 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                <Checkbox
+                  checked={filters.brands.includes(brand)}
+                  onCheckedChange={() => {
+                    const next = filters.brands.includes(brand)
+                      ? filters.brands.filter((b) => b !== brand)
+                      : [...filters.brands, brand]
+                    update({ brands: next })
+                  }}
+                  className="h-3.5 w-3.5"
+                />
+                <span className="text-xs text-gray-700">{brand}</span>
+              </label>
+            ))}
+          </div>
+        </FilterSection>
+
+        <hr className="border-gray-100" />
+
+        {/* Condition */}
+        <FilterSection
+          title="Condição"
+          color="bg-purple-500"
+          count={filters.condition.length}
+          expanded={sections.condition}
+          onToggle={() => toggle('condition')}
+        >
+          <div className="space-y-1 pl-4">
+            {[
+              { value: 'novo', label: 'Novo' },
+              { value: 'seminovo', label: 'Seminovo' },
+            ].map((c) => (
+              <label
+                key={c.value}
+                className="flex items-center gap-2.5 cursor-pointer py-1.5 px-2 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                <Checkbox
+                  checked={filters.condition.includes(c.value)}
+                  onCheckedChange={() => {
+                    const next = filters.condition.includes(c.value)
+                      ? filters.condition.filter((x) => x !== c.value)
+                      : [...filters.condition, c.value]
+                    update({ condition: next })
+                  }}
+                  className="h-3.5 w-3.5"
+                />
+                <span className="text-xs text-gray-700">{c.label}</span>
+              </label>
+            ))}
+          </div>
+        </FilterSection>
+
+        <hr className="border-gray-100" />
+
+        {/* Rating */}
+        <FilterSection
+          title="Avaliação"
+          color="bg-amber-500"
+          expanded={sections.rating}
+          onToggle={() => toggle('rating')}
+        >
+          <div className="space-y-1 pl-4">
+            {[5, 4, 3].map((r) => (
+              <button
+                key={r}
+                onClick={() => update({ rating: filters.rating === r ? 0 : r })}
+                className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-md text-left transition-colors ${
+                  filters.rating === r
+                    ? 'bg-amber-50 border border-amber-200'
+                    : 'hover:bg-gray-50'
+                }`}
+              >
+                <span className="flex">
+                  {[...Array(r)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-3 h-3 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                </span>
+                <span className="text-xs text-gray-600">e acima</span>
+              </button>
+            ))}
+          </div>
+        </FilterSection>
+
+        <hr className="border-gray-100" />
+
+        {/* Shipping */}
+        <FilterSection
+          title="Entrega"
+          color="bg-blue-500"
+          expanded={sections.shipping}
+          onToggle={() => toggle('shipping')}
+        >
+          <div className="space-y-1 pl-4">
+            <label className="flex items-center gap-2.5 cursor-pointer py-1.5 px-2 rounded-md hover:bg-gray-50 transition-colors">
+              <Checkbox
+                checked={filters.freeShipping}
+                onCheckedChange={() =>
+                  update({ freeShipping: !filters.freeShipping })
+                }
+                className="h-3.5 w-3.5"
+              />
+              <Truck className="w-3.5 h-3.5 text-green-600" />
+              <span className="text-xs text-gray-700">Frete Grátis</span>
+            </label>
+            <label className="flex items-center gap-2.5 cursor-pointer py-1.5 px-2 rounded-md hover:bg-gray-50 transition-colors">
+              <Checkbox
+                checked={filters.inStock}
+                onCheckedChange={() => update({ inStock: !filters.inStock })}
+                className="h-3.5 w-3.5"
+              />
+              <span className="text-xs text-gray-700">Em estoque</span>
+            </label>
+          </div>
+        </FilterSection>
+      </div>
+
+      {/* Footer */}
+      {activeCount > 0 && (
+        <div className="flex-shrink-0 px-5 py-3 border-t border-gray-100 bg-gray-50/80">
+          <button
+            onClick={clearAll}
+            className="w-full py-2 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center justify-center gap-1.5"
           >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Limpar Todos os Filtros
-          </Button>
+            <RotateCcw className="w-3 h-3" />
+            Limpar todos os filtros
+          </button>
         </div>
-      </aside>
-    </>
+      )}
+    </div>
+  )
+
+  // Mobile: full-screen drawer
+  if (onClose) {
+    return (
+      <>
+        {isOpen && (
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"
+            onClick={onClose}
+          />
+        )}
+        <aside
+          className={`fixed left-0 top-0 bottom-0 w-72 bg-white z-50 shadow-2xl transition-transform duration-300 lg:hidden ${
+            isOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+        >
+          {sidebarContent}
+        </aside>
+      </>
+    )
+  }
+
+  // Desktop: sticky sidebar that starts below header
+  return (
+    <aside className="w-56 flex-shrink-0 hidden lg:block">
+      <div className="sticky top-[9rem] h-[calc(100vh-10rem)] bg-white rounded-xl border border-gray-200/80 shadow-sm overflow-hidden">
+        {sidebarContent}
+      </div>
+    </aside>
   )
 }

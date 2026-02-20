@@ -13,26 +13,26 @@ main,
   transform-origin: top center;
 }
 
-/* Reduz tamanho base da fonte para 85% (afeta rem/em) */
+/* Reduz tamanho base da fonte para 80% (afeta rem/em) */
 html {
-  font-size: 13.6px; /* 85% de 16px = 13.6px */
+  font-size: 12.8px; /* 80% de 16px = 12.8px */
 }
 
 @media (min-width: 768px) {
   html {
-    font-size: 13.6px;
+    font-size: 12.8px;
   }
 }
 
 @media (min-width: 1024px) {
   html {
-    font-size: 13.6px;
+    font-size: 12.8px;
   }
 }
 
 @media (min-width: 1536px) {
   html {
-    font-size: 13.6px;
+    font-size: 12.8px;
   }
 }
 
