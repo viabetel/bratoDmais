@@ -1,0 +1,105 @@
+{
+  "audit_date": "2026-02-20",
+  "standardization_status": "COMPLETED",
+  "slug_pattern": "lower-case, no-accents, hyphens-for-spaces",
+  
+  "parent_categories": [
+    {
+      "id": "cat-eletrodomesticos",
+      "slug": "eletrodomesticos",
+      "name": "Eletrodomésticos",
+      "subcategories": ["geladeiras", "fogoes", "microondas", "maquinas-lavar"]
+    },
+    {
+      "id": "cat-climatizacao",
+      "slug": "climatizacao",
+      "name": "Climatização",
+      "subcategories": ["ar-condicionado", "ventiladores"]
+    },
+    {
+      "id": "cat-utilidades",
+      "slug": "utilidades",
+      "name": "Utilidades Domésticas",
+      "subcategories": []
+    },
+    {
+      "id": "cat-tvs",
+      "slug": "tvs",
+      "name": "TVs",
+      "subcategories": []
+    },
+    {
+      "id": "cat-notebooks",
+      "slug": "notebooks",
+      "name": "Notebooks",
+      "subcategories": []
+    },
+    {
+      "id": "cat-smartphones",
+      "slug": "smartphones",
+      "name": "Smartphones",
+      "subcategories": []
+    },
+    {
+      "id": "cat-eletronicos",
+      "slug": "eletronicos",
+      "name": "Eletrônicos",
+      "subcategories": []
+    },
+    {
+      "id": "cat-perifericos",
+      "slug": "perifericos",
+      "name": "Periféricos",
+      "subcategories": []
+    },
+    {
+      "id": "cat-componentes",
+      "slug": "componentes",
+      "name": "Componentes",
+      "subcategories": []
+    },
+    {
+      "id": "cat-acessorios",
+      "slug": "acessorios",
+      "name": "Acessórios",
+      "subcategories": []
+    }
+  ],
+
+  "issues_fixed": {
+    "eletrodomesticos_empty_category": {
+      "root_cause": "Filter logic only checked exact categorySlug match. Parent category 'eletrodomesticos' has no products directly - all are in subcategories (geladeiras, fogoes, etc)",
+      "fix_applied": "Added getSubcategorySlugs() utility to resolve parent categories to their subcategory slugs. Updated category page filter to use applicableSubcategorySlugs array",
+      "status": "FIXED"
+    },
+    "slug_consistency": {
+      "finding": "All slugs are already consistent (lower-case, no-accents, hyphens). No standardization needed",
+      "status": "VERIFIED"
+    }
+  },
+
+  "product_categorySlug_mapping": {
+    "note": "Products use categorySlug for their immediate subcategory. To find parent, use getParentCategory() utility",
+    "examples": {
+      "geladeiras": "parent: eletrodomesticos",
+      "fogoes": "parent: eletrodomesticos",
+      "microondas": "parent: eletrodomesticos",
+      "maquinas-lavar": "parent: eletrodomesticos",
+      "ar-condicionado": "parent: climatizacao",
+      "ventiladores": "parent: climatizacao"
+    }
+  },
+
+  "url_routes": {
+    "category_parent": "/c/eletrodomesticos (shows all products from all subcategories)",
+    "category_leaf": "/c/geladeiras (shows only geladeira products)",
+    "product": "/p/:productSlug (e.g., /p/geladeira-brastemp-frost-free-375l)"
+  },
+
+  "next_tasks": [
+    "Implement Products vs Services navigation modes",
+    "Build cross-service modules on product detail page",
+    "Add query param support for mode (buy|rent|service)",
+    "Create business monetization plans"
+  ]
+}

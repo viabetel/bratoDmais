@@ -4,6 +4,9 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { WhatsAppButton } from '@/components/common/WhatsAppButton'
+import { CartToast } from '@/components/common/CartToast'
+import { CompareBar } from '@/components/common/CompareBar'
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -43,6 +46,9 @@ export default function RootLayout({
         <Header />
         {children}
         <Footer />
+        <WhatsAppButton />
+        <CompareBar />
+        <CartToast />
       </body>
     </html>
   )

@@ -49,17 +49,23 @@ export default function CheckoutPage() {
   const [selectedPayment, setSelectedPayment] = useState<'pix' | 'credito' | 'boleto'>('pix')
   const [isProcessing, setIsProcessing] = useState(false)
 
+  const [cardNumber, setCardNumber] = useState('')
+  const [cardName, setCardName] = useState('')
+  const [cardExpiry, setCardExpiry] = useState('')
+  const [cardCvv, setCardCvv] = useState('')
+  const [installmentCount, setInstallmentCount] = useState(1)
+
+  const maxInstallments = Math.min(6, Math.floor(totalPrice / 50))
+  const formatCardNumber = (v: string) =>
+    v.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})/g, '$1 ').trim()
+  const formatExpiry = (v: string) =>
+    v.replace(/\D/g, '').slice(0, 4).replace(/(\d{2})(\d)/, '$1/$2')
+
   const totalPrice = getTotalPrice()
   const pixPrice = getPixPrice(totalPrice)
   const pixSavings = totalPrice - pixPrice
 
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!isLoggedIn) {
-      router.push('/login')
-    }
-  }, [isLoggedIn, router])
-
+  // Allow guest checkout - just redirect if explicitly not logged in AND cart empty
   // Redirect if empty cart
   useEffect(() => {
     if (items.length === 0) {
@@ -67,7 +73,7 @@ export default function CheckoutPage() {
     }
   }, [items, router])
 
-  if (!isLoggedIn || items.length === 0) {
+  if (items.length === 0) {
     return null
   }
 
@@ -162,6 +168,23 @@ export default function CheckoutPage() {
                   <MapPin className="w-5 h-5 text-primary" />
                   Endereço de Entrega
                 </h2>
+
+                {/* Guest checkout notice */}
+                {!isLoggedIn && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 flex items-start gap-3">
+                    <Sparkles className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-semibold text-blue-800">Comprando como convidado</p>
+                      <p className="text-xs text-blue-600 mt-0.5">
+                        Você pode finalizar a compra sem criar conta.{' '}
+                        <Link href="/login?redirect=/checkout" className="underline font-medium">
+                          Entrar ou criar conta
+                        </Link>{' '}
+                        para salvar endereços e acompanhar pedidos.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {addresses.length === 0 ? (
                   <div className="text-center py-12 bg-muted/30 rounded-xl">
@@ -337,30 +360,96 @@ export default function CheckoutPage() {
                     </div>
                   </label>
 
-                  <label
-                    className={`flex items-start gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
-                      selectedPayment === 'credito' 
-                        ? 'border-primary bg-primary/5' 
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="payment"
-                      value="credito"
-                      checked={selectedPayment === 'credito'}
-                      onChange={(e) => setSelectedPayment(e.target.value as any)}
-                      className="mt-1 accent-primary"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <CreditCard className="w-5 h-5 text-primary" />
-                        <p className="font-semibold">Cartão de Crédito</p>
+                  <div className={`border-2 rounded-xl transition-all ${selectedPayment === 'credito' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}`}>
+                    <label className="flex items-start gap-4 p-4 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="payment"
+                        value="credito"
+                        checked={selectedPayment === 'credito'}
+                        onChange={(e) => setSelectedPayment(e.target.value as any)}
+                        className="mt-1 accent-primary"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <CreditCard className="w-5 h-5 text-primary" />
+                          <p className="font-semibold">Cartão de Crédito</p>
+                          <div className="flex gap-1 ml-auto">
+                            {['Visa', 'MC', 'Elo'].map(b => (
+                              <span key={b} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-bold">{b}</span>
+                            ))}
+                          </div>
+                        </div>
+                        <p className="text-lg font-bold mt-1">{formatBRL(totalPrice)}</p>
+                        <p className="text-sm text-muted-foreground">em até {maxInstallments}x de {formatBRL(totalPrice / maxInstallments)} sem juros</p>
                       </div>
-                      <p className="text-lg font-bold mt-2">{formatBRL(totalPrice)}</p>
-                      <p className="text-sm text-muted-foreground">em até 6x de {formatBRL(totalPrice/6)} sem juros</p>
-                    </div>
-                  </label>
+                    </label>
+
+                    {/* Card form — appears when selected */}
+                    {selectedPayment === 'credito' && (
+                      <div className="px-4 pb-4 space-y-3 border-t border-primary/20 pt-4">
+                        <div>
+                          <label className="text-xs font-semibold text-gray-600 mb-1 block">Número do Cartão</label>
+                          <input
+                            type="text"
+                            placeholder="0000 0000 0000 0000"
+                            value={cardNumber}
+                            onChange={(e) => setCardNumber(formatCardNumber(e.target.value))}
+                            maxLength={19}
+                            className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm font-mono focus:border-primary focus:outline-none transition-colors"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-600 mb-1 block">Nome no Cartão</label>
+                          <input
+                            type="text"
+                            placeholder="NOME COMO ESTÁ NO CARTÃO"
+                            value={cardName}
+                            onChange={(e) => setCardName(e.target.value.toUpperCase())}
+                            className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm uppercase focus:border-primary focus:outline-none transition-colors"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <label className="text-xs font-semibold text-gray-600 mb-1 block">Validade</label>
+                            <input
+                              type="text"
+                              placeholder="MM/AA"
+                              value={cardExpiry}
+                              onChange={(e) => setCardExpiry(formatExpiry(e.target.value))}
+                              maxLength={5}
+                              className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm font-mono focus:border-primary focus:outline-none transition-colors"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-semibold text-gray-600 mb-1 block">CVV</label>
+                            <input
+                              type="text"
+                              placeholder="123"
+                              value={cardCvv}
+                              onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                              maxLength={4}
+                              className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm font-mono focus:border-primary focus:outline-none transition-colors"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-600 mb-1 block">Parcelas</label>
+                          <select
+                            value={installmentCount}
+                            onChange={(e) => setInstallmentCount(Number(e.target.value))}
+                            className="w-full px-3 py-2.5 border-2 border-gray-200 rounded-lg text-sm focus:border-primary focus:outline-none bg-white"
+                          >
+                            {Array.from({ length: maxInstallments }, (_, i) => i + 1).map(n => (
+                              <option key={n} value={n}>
+                                {n}x de {formatBRL(totalPrice / n)} {n === 1 ? '— sem juros (à vista)' : '— sem juros'}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
                   <label
                     className={`flex items-start gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${
@@ -405,6 +494,27 @@ export default function CheckoutPage() {
                     </>
                   )}
                 </Button>
+
+                {/* Security trust row */}
+                <div className="mt-4 bg-gray-50 rounded-xl p-3 flex flex-wrap items-center justify-center gap-4 text-xs text-gray-500">
+                  <span className="flex items-center gap-1 font-medium">
+                    <Shield className="w-4 h-4 text-green-500" />
+                    SSL Seguro
+                  </span>
+                  <span className="flex items-center gap-1">
+                    🔒 Dados criptografados
+                  </span>
+                  <span className="flex items-center gap-1">
+                    ✓ Ambiente 100% seguro
+                  </span>
+                </div>
+                <div className="flex items-center justify-center gap-2 mt-2">
+                  {['Visa', 'Mastercard', 'Elo', 'Pix', 'Boleto'].map((brand) => (
+                    <span key={brand} className="bg-white border border-gray-200 text-gray-600 text-[10px] font-bold px-2 py-1 rounded">
+                      {brand}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>

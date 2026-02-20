@@ -8,6 +8,12 @@ export interface CartItem {
   price: number
   quantity: number
   image: string
+  services?: {
+    serviceId: string
+    serviceName: string
+    servicePrice: number
+    serviceType: 'installation' | 'maintenance' | 'warranty' | 'protection' | 'rental'
+  }[]
 }
 
 interface CartStore {
@@ -15,6 +21,8 @@ interface CartStore {
   addItem: (item: Omit<CartItem, 'id'>) => void
   removeItem: (productId: string) => void
   updateQuantity: (productId: string, quantity: number) => void
+  addServiceToProduct: (productId: string, service: CartItem['services'][0]) => void
+  removeServiceFromProduct: (productId: string, serviceId: string) => void
   clearCart: () => void
   getTotalPrice: () => number
   getTotalItems: () => number
@@ -62,10 +70,38 @@ export const useCartStore = create<CartStore>()(
           ),
         })),
 
+      addServiceToProduct: (productId, service) =>
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.productId === productId
+              ? {
+                  ...item,
+                  services: [...(item.services || []), service],
+                }
+              : item
+          ),
+        })),
+
+      removeServiceFromProduct: (productId, serviceId) =>
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.productId === productId
+              ? {
+                  ...item,
+                  services: (item.services || []).filter((s) => s.serviceId !== serviceId),
+                }
+              : item
+          ),
+        })),
+
       clearCart: () => set({ items: [] }),
 
       getTotalPrice: () => {
-        return get().items.reduce((total, item) => total + item.price * item.quantity, 0)
+        return get().items.reduce((total, item) => {
+          const productPrice = item.price * item.quantity
+          const servicesPrice = (item.services || []).reduce((sum, service) => sum + service.servicePrice, 0)
+          return total + productPrice + servicesPrice
+        }, 0)
       },
 
       getTotalItems: () => {

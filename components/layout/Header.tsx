@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation'
 import { 
   Search, ShoppingCart, Heart, User, Menu, X, 
   ChevronDown, Truck, Shield, CreditCard, Zap,
-  Phone, MapPin
+  Phone, MapPin, Refrigerator, Flame, Microwave, Droplets,
+  Wind, Home, Tv, Laptop, Smartphone, Package, Wrench, Calendar
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/data/categories'
@@ -16,17 +17,23 @@ import { useFavoritesStore } from '@/lib/store/favoritesStore'
 import { useUserStore } from '@/lib/store/userStore'
 import { siteConfig, formatCurrency } from '@/lib/config'
 
-const categoryIcons: Record<string, string> = {
-  'eletronicos': '⚡',
-  'perifericos': '🖱️',
-  'componentes': '🔧',
-  'acessorios': '🎧',
-  'eletrodomesticos': '🏠',
-  'climatizacao': '❄️',
-  'tvs': '📺',
-  'notebooks': '💻',
-  'smartphones': '📱',
-  'utilidades': '🍳',
+// Função para mapear slugs para ícones Lucide
+const getCategoryIcon = (slug: string) => {
+  const iconMap: Record<string, React.ComponentType<{ className: string }>> = {
+    'eletrodomesticos': Refrigerator,
+    'geladeiras': Refrigerator,
+    'fogoes': Flame,
+    'microondas': Microwave,
+    'maquinas-lavar': Droplets,
+    'climatizacao': Wind,
+    'utilidades': Home,
+    'tvs': Tv,
+    'notebooks': Laptop,
+    'smartphones': Smartphone,
+    'eletronicos': Zap,
+  }
+  const Icon = iconMap[slug] || Package
+  return Icon
 }
 
 export function Header() {
@@ -112,6 +119,7 @@ export function Header() {
                     src="/logo.png" 
                     alt="Barato D+" 
                     fill
+                    sizes="(max-width: 768px) 56px, 64px"
                     className="object-contain drop-shadow-md"
                     priority
                   />
@@ -234,44 +242,122 @@ export function Header() {
 
               {/* Mega Menu Dropdown */}
               {megaMenuOpen && (
-                <div className="absolute left-0 top-full w-[800px] bg-white border border-gray-200 shadow-2xl rounded-b-xl overflow-hidden z-50">
-                  <div className="grid grid-cols-3 gap-0">
-                    {/* Categorias */}
-                    <div className="col-span-2 p-6">
-                      <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Categorias</h3>
-                      <div className="grid grid-cols-2 gap-3">
-                        {categories.map((category) => (
+                <div className="absolute left-0 top-full w-screen max-w-6xl bg-white border border-gray-200 shadow-2xl rounded-b-xl overflow-hidden z-50">
+                  <div className="grid grid-cols-2 gap-0">
+                    {/* LEFT: Categorias + Serviços */}
+                    <div className="p-6 border-r border-gray-200">
+                      {/* Categorias Section */}
+                      <div className="mb-8">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Categorias</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          {categories.map((category) => (
+                            <Link
+                              key={category.id}
+                              href={`/c/${category.slug}`}
+                              className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group"
+                              onClick={() => setMegaMenuOpen(false)}
+                            >
+                              {(() => {
+                                const Icon = getCategoryIcon(category.slug)
+                                return <Icon className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                              })()}
+                              <div>
+                                <span className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors block text-sm">
+                                  {category.name}
+                                </span>
+                                <span className="text-xs text-gray-500">{category.description?.slice(0, 25)}...</span>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Serviços Section */}
+                      <div className="border-t border-gray-200 pt-6">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Serviços</h3>
+                        <div className="space-y-2">
+                          {/* Aluguel */}
                           <Link
-                            key={category.id}
-                            href={`/c/${category.slug}`}
+                            href="/busca?service=rental"
+                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-green-50 transition-colors group"
+                            onClick={() => setMegaMenuOpen(false)}
+                          >
+                            <Calendar className="w-6 h-6 text-green-600 flex-shrink-0" />
+                            <div>
+                              <span className="font-semibold text-gray-800 group-hover:text-green-600 transition-colors block text-sm">
+                                Aluguel/Alocação
+                              </span>
+                              <span className="text-xs text-gray-500">Geladeiras, lavadoras, AC por período</span>
+                            </div>
+                          </Link>
+
+                          {/* Instalação */}
+                          <Link
+                            href="/busca?service=installation"
+                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 transition-colors group"
+                            onClick={() => setMegaMenuOpen(false)}
+                          >
+                            <Wrench className="w-6 h-6 text-orange-600 flex-shrink-0" />
+                            <div>
+                              <span className="font-semibold text-gray-800 group-hover:text-orange-600 transition-colors block text-sm">
+                                Instalação
+                              </span>
+                              <span className="text-xs text-gray-500">Profissional com garantia incluída</span>
+                            </div>
+                          </Link>
+
+                          {/* Manutenção */}
+                          <Link
+                            href="/busca?service=maintenance"
                             className="flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 transition-colors group"
                             onClick={() => setMegaMenuOpen(false)}
                           >
-                            <span className="text-2xl">{categoryIcons[category.slug] || '📦'}</span>
+                            <Shield className="w-6 h-6 text-blue-600 flex-shrink-0" />
                             <div>
-                              <span className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors block">
-                                {category.name}
+                              <span className="font-semibold text-gray-800 group-hover:text-blue-600 transition-colors block text-sm">
+                                Manutenção
                               </span>
-                              <span className="text-xs text-gray-500">{category.description?.slice(0, 30)}...</span>
+                              <span className="text-xs text-gray-500">Preventiva, anual ou emergencial</span>
                             </div>
                           </Link>
-                        ))}
+
+                          {/* Garantia Estendida */}
+                          <Link
+                            href="/busca?service=warranty"
+                            className="flex items-center gap-3 p-3 rounded-lg hover:bg-purple-50 transition-colors group"
+                            onClick={() => setMegaMenuOpen(false)}
+                          >
+                            <Package className="w-6 h-6 text-purple-600 flex-shrink-0" />
+                            <div>
+                              <span className="font-semibold text-gray-800 group-hover:text-purple-600 transition-colors block text-sm">
+                                Garantia Estendida
+                              </span>
+                              <span className="text-xs text-gray-500">12, 24 ou 36 meses de proteção</span>
+                            </div>
+                          </Link>
+                        </div>
                       </div>
                     </div>
                     
-                    {/* Banner Lateral */}
-                    <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-white">
-                      <h3 className="font-bold text-lg mb-2">🔥 Ofertas Imperdíveis!</h3>
-                      <p className="text-sm text-blue-100 mb-4">Até 80% de desconto em produtos selecionados</p>
-                      <Link 
-                        href="/busca?sort=discount"
-                        onClick={() => setMegaMenuOpen(false)}
-                      >
-                        <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold">
-                          Ver Ofertas
-                        </Button>
-                      </Link>
-                      <div className="mt-6 space-y-2 text-sm">
+                    {/* RIGHT: Banner Lateral */}
+                    <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-white flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <Flame className="w-5 h-5 text-orange-300" />
+                          <h3 className="font-bold text-lg">Ofertas Imperdíveis!</h3>
+                        </div>
+                        <p className="text-sm text-blue-100 mb-4">Até 80% de desconto em produtos selecionados</p>
+                        <Link 
+                          href="/busca?sort=discount"
+                          onClick={() => setMegaMenuOpen(false)}
+                        >
+                          <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 font-bold">
+                            Ver Ofertas
+                          </Button>
+                        </Link>
+                      </div>
+                      
+                      <div className="space-y-2 text-sm">
                         <div className="flex items-center gap-2">
                           <Truck className="w-4 h-4" />
                           <span>Frete Grátis +{formatCurrency(siteConfig.shipping.freeShippingMinimum)}</span>
@@ -298,6 +384,13 @@ export function Header() {
             >
               <Zap className="w-4 h-4" />
               Ofertas
+            </Link>
+            <Link 
+              href="/busca?service=rental" 
+              className="px-5 py-3.5 text-sm font-semibold text-green-600 hover:bg-green-50 transition-colors flex items-center gap-1.5"
+            >
+              <Calendar className="w-4 h-4" />
+              Aluguel
             </Link>
             <Link 
               href="/busca?condition=novo" 
@@ -368,7 +461,10 @@ export function Header() {
                     className="flex items-center gap-2 p-2.5 bg-gray-50 rounded-lg hover:bg-blue-50 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <span className="text-lg">{categoryIcons[cat.slug] || '📦'}</span>
+                    {(() => {
+                      const Icon = getCategoryIcon(cat.slug)
+                      return <Icon className="w-5 h-5 text-blue-600 flex-shrink-0" />
+                    })()}
                     <span className="text-sm font-medium text-gray-700">{cat.name}</span>
                   </Link>
                 ))}

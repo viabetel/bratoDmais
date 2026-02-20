@@ -65,6 +65,7 @@ export function Footer() {
                   src="/logo.png" 
                   alt="Barato D+" 
                   fill
+                  sizes="48px"
                   className="object-contain"
                 />
               </div>
@@ -216,7 +217,30 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Social & Newsletter */}
+        {/* Newsletter Section */}
+        <div className="border-t border-gray-800 pt-8 mb-8">
+          <div className="bg-gray-800 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-1">
+              <h4 className="font-bold text-lg text-white mb-1">Receba Ofertas Exclusivas</h4>
+              <p className="text-sm text-gray-400">Cadastre seu e-mail e seja o primeiro a saber sobre promoções.</p>
+            </div>
+            <form className="flex gap-2 w-full md:w-auto" onSubmit={(e) => e.preventDefault()}>
+              <input
+                type="email"
+                placeholder="Seu melhor e-mail"
+                className="flex-1 md:w-64 bg-gray-700 border border-gray-600 text-white placeholder:text-gray-400 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 transition-colors"
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-colors whitespace-nowrap"
+              >
+                Cadastrar
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {/* Social & Security */}
         <div className="border-t border-gray-800 pt-8 mb-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div>

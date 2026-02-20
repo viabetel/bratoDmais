@@ -13,13 +13,14 @@ import { useCartStore } from '@/lib/store/cartStore'
 import { products } from '@/data/products'
 import { ProductCard } from '@/components/products/ProductCard'
 import { siteConfig, formatCurrency, calcPixPrice, calcInstallments, calcShipping } from '@/lib/config'
+import { ShippingProgressBar } from '@/components/cart/ShippingProgressBar'
 
 // Prevent static pre-rendering
 export const dynamic = 'force-dynamic'
 
 export default function CartPage() {
   const router = useRouter()
-  const { items, removeItem, updateQuantity, clearCart, getTotalPrice } = useCartStore()
+  const { items, removeItem, updateQuantity, clearCart, getTotalPrice, removeServiceFromProduct } = useCartStore()
   const [couponCode, setCouponCode] = useState('')
   const [couponApplied, setCouponApplied] = useState<string | null>(null)
   const [couponError, setCouponError] = useState<string | null>(null)
@@ -207,7 +208,7 @@ export default function CartPage() {
                       </button>
                     </div>
 
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex items-baseline gap-2 mb-2">
                       <span className="text-xl font-bold text-gray-900">
                         {formatCurrency(item.price * item.quantity)}
                       </span>
@@ -215,6 +216,37 @@ export default function CartPage() {
                         {formatCurrency(calcPixPrice(item.price * item.quantity))} no Pix
                       </span>
                     </div>
+
+                    {/* Services attached to this item */}
+                    {item.services && item.services.length > 0 && (
+                      <div className="border-t border-blue-100 pt-2 mt-2 space-y-1.5">
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Serviços incluídos:</p>
+                        {item.services.map((svc) => {
+                          const serviceIcons: Record<string, string> = {
+                            installation: '🔧', warranty: '🛡️', maintenance: '⚙️',
+                            rental: '📦', protection: '🔒',
+                          }
+                          return (
+                            <div key={svc.serviceId} className="flex items-center justify-between bg-blue-50 border border-blue-100 rounded-lg px-3 py-1.5">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm">{serviceIcons[svc.serviceType] || '⚙️'}</span>
+                                <span className="text-xs font-semibold text-blue-800">{svc.serviceName}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-bold text-blue-700">+{formatCurrency(svc.servicePrice)}</span>
+                                <button
+                                  onClick={() => removeServiceFromProduct(item.productId, svc.serviceId)}
+                                  className="text-gray-400 hover:text-red-500 transition-colors"
+                                  title="Remover serviço"
+                                >
+                                  <X className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               )
@@ -376,6 +408,11 @@ export default function CartPage() {
             {/* Summary */}
             <div className="bg-white rounded-2xl border-2 border-gray-100 p-5">
               <h3 className="font-bold text-gray-900 mb-4">Resumo do Pedido</h3>
+
+              {/* Shipping progress bar - always visible at top */}
+              <div className="mb-4">
+                <ShippingProgressBar cartTotal={subtotal} />
+              </div>
               
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -445,24 +482,6 @@ export default function CartPage() {
               </div>
             </div>
 
-            {/* Free shipping progress */}
-            {!shippingResult?.free && subtotal < siteConfig.shipping.freeShippingMinimum && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <Gift className="w-5 h-5 text-yellow-600" />
-                  <span className="font-medium text-yellow-800">Frete Grátis</span>
-                </div>
-                <p className="text-sm text-yellow-700 mb-2">
-                  Faltam <strong>{formatCurrency(siteConfig.shipping.freeShippingMinimum - subtotal)}</strong> para ganhar frete grátis!
-                </p>
-                <div className="w-full bg-yellow-200 rounded-full h-2">
-                  <div 
-                    className="bg-yellow-500 h-2 rounded-full transition-all"
-                    style={{ width: `${Math.min((subtotal / siteConfig.shipping.freeShippingMinimum) * 100, 100)}%` }}
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </div>
 
