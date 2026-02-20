@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, X, Sliders, Filter } from 'lucide-react'
+import { ChevronDown, X, Sliders, RotateCcw } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -28,6 +28,13 @@ export interface FiltersState {
   freeShipping: boolean
 }
 
+interface FilterSection {
+  id: string
+  title: string
+  icon: string
+  color: string
+}
+
 export function ProfessionalFilterSidebar({
   currentCategory,
   onFilterChange,
@@ -46,19 +53,19 @@ export function ProfessionalFilterSidebar({
   })
 
   const [expandedSections, setExpandedSections] = useState({
-    categories: true,
-    subcategories: !!currentCategory,
     price: true,
     brands: true,
     condition: false,
-    stock: false,
     rating: false,
     shipping: false,
   })
 
-  const brands = Array.from(new Set(products.map((p) => p.brand))).sort()
-  const conditions = ['novo', 'reembalado', 'remanufaturado']
-  const subcategoriesOfCurrent = currentCategory ? getSubcategories(currentCategory) : []
+  const brands = Array.from(new Set(products.map((p) => p.brand))).sort().slice(0, 12)
+  const conditions = [
+    { value: 'novo', label: 'Novo' },
+    { value: 'reembalado', label: 'Reembalado' },
+    { value: 'remanufaturado', label: 'Remanufaturado' },
+  ]
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }))
@@ -68,13 +75,6 @@ export function ProfessionalFilterSidebar({
     const newFilters = { ...filters, [key]: value }
     setFilters(newFilters)
     onFilterChange(newFilters)
-  }
-
-  const handleCategoryToggle = (categorySlug: string) => {
-    const newCategories = filters.categories.includes(categorySlug)
-      ? filters.categories.filter((c) => c !== categorySlug)
-      : [...filters.categories, categorySlug]
-    updateFilter('categories', newCategories)
   }
 
   const handleBrandToggle = (brand: string) => {
@@ -106,283 +106,262 @@ export function ProfessionalFilterSidebar({
     onFilterChange(defaultFilters)
   }
 
-  if (!isOpen) return null
+  const activeFiltersCount = [
+    ...filters.brands,
+    ...filters.condition,
+    filters.inStock ? 1 : 0,
+    filters.rating > 0 ? 1 : 0,
+    filters.freeShipping ? 1 : 0,
+  ].filter(Boolean).length
 
   return (
     <>
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-30 md:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
           onClick={onClose}
         />
       )}
 
-      {/* Sidebar - Glassmorphism Design */}
-      <div className="fixed md:sticky top-0 left-0 md:left-auto h-screen md:h-auto md:max-h-[calc(100vh-120px)] w-96 md:w-80 z-40 md:z-0">
-        {/* Glassmorphism Container */}
-        <div className="h-full w-full bg-gradient-to-b from-white/95 to-white/90 md:bg-gradient-to-b md:from-white md:to-white backdrop-blur-xl md:backdrop-blur-none border-r border-white/20 md:border-gray-200 md:rounded-2xl md:shadow-xl md:shadow-blue-500/10 overflow-y-auto md:overflow-y-auto md:scrollbar-hide">
-          {/* Header */}
-          <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 md:p-6 md:rounded-t-2xl backdrop-blur-xl flex items-center justify-between z-10 border-b border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center">
-                <Filter className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">Filtros</h3>
-                <p className="text-xs text-blue-100">Refine sua busca</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="md:hidden w-8 h-8 rounded-lg bg-white/20 hover:bg-white/30 flex items-center justify-center transition-all"
-              aria-label="Fechar filtros"
-            >
-              <X className="w-5 h-5" />
-            </button>
+      {/* Sidebar Container */}
+      <aside
+        className={`fixed lg:sticky lg:top-0 left-0 top-0 w-72 lg:w-64 h-screen lg:h-auto max-h-screen lg:max-h-none bg-white border-r border-gray-200 z-40 lg:z-0 transform transition-transform duration-300 ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        } flex flex-col`}
+      >
+        {/* Header */}
+        <div className="sticky top-0 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-600 text-white px-6 py-5 flex items-center justify-between gap-3 z-10">
+          <div className="flex items-center gap-2">
+            <Sliders className="w-5 h-5" />
+            <h2 className="font-bold text-lg">Filtros</h2>
           </div>
+          {activeFiltersCount > 0 && (
+            <span className="bg-white text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full">
+              {activeFiltersCount}
+            </span>
+          )}
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-          {/* Content */}
-          <div className="p-6 space-y-5">
-            {/* Categorias */}
-            <FilterSection
-              title="Categorias"
-              isExpanded={expandedSections.categories}
-              onToggle={() => toggleSection('categories')}
-              itemCount={filters.categories.length}
-            >
-              <div className="space-y-3">
-                {categories.map((cat) => (
-                  <label key={cat.id} className="flex items-center group cursor-pointer">
-                    <div className="relative">
-                      <Checkbox
-                        checked={filters.categories.includes(cat.slug)}
-                        onCheckedChange={() => handleCategoryToggle(cat.slug)}
-                        className="w-5 h-5 rounded-lg border-2 border-gray-300 group-hover:border-blue-500 transition-colors"
-                      />
-                    </div>
-                    <span className="ml-3 text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
-                      {cat.name}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </FilterSection>
-
-            {/* Subcategorias */}
-            {subcategoriesOfCurrent.length > 0 && (
-              <FilterSection
-                title="Subcategorias"
-                isExpanded={expandedSections.subcategories}
-                onToggle={() => toggleSection('subcategories')}
-                badge={`+${subcategoriesOfCurrent.length}`}
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div className="p-5 space-y-4">
+            {/* Price Filter */}
+            <div className="border border-gray-200 rounded-xl p-4 bg-gradient-to-br from-green-50 to-emerald-50">
+              <button
+                onClick={() => toggleSection('price')}
+                className="w-full flex items-center justify-between mb-3 hover:opacity-75 transition"
               >
+                <span className="font-bold text-gray-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  Preço
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${expandedSections.price ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {expandedSections.price && (
                 <div className="space-y-3">
-                  {subcategoriesOfCurrent.map((subcat) => (
-                    <label key={subcat.id} className="flex items-center group cursor-pointer">
+                  <Slider
+                    min={0}
+                    max={10000}
+                    step={100}
+                    value={[filters.priceMin, filters.priceMax]}
+                    onValueChange={(val) => {
+                      updateFilter('priceMin', val[0])
+                      updateFilter('priceMax', val[1])
+                    }}
+                    className="w-full"
+                  />
+                  <div className="flex gap-2 text-xs">
+                    <input
+                      type="number"
+                      value={filters.priceMin}
+                      onChange={(e) => updateFilter('priceMin', Number(e.target.value))}
+                      className="flex-1 px-2 py-1.5 border border-gray-300 rounded font-medium"
+                      placeholder="Min"
+                    />
+                    <input
+                      type="number"
+                      value={filters.priceMax}
+                      onChange={(e) => updateFilter('priceMax', Number(e.target.value))}
+                      className="flex-1 px-2 py-1.5 border border-gray-300 rounded font-medium"
+                      placeholder="Max"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Brands Filter */}
+            <div className="border border-gray-200 rounded-xl p-4 bg-gradient-to-br from-orange-50 to-yellow-50">
+              <button
+                onClick={() => toggleSection('brands')}
+                className="w-full flex items-center justify-between mb-3 hover:opacity-75 transition"
+              >
+                <span className="font-bold text-gray-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+                  Marcas {filters.brands.length > 0 && `(${filters.brands.length})`}
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${expandedSections.brands ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {expandedSections.brands && (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {brands.map((brand) => (
+                    <div key={brand} className="flex items-center gap-3">
                       <Checkbox
-                        checked={filters.categories.includes(subcat.slug)}
-                        onCheckedChange={() => handleCategoryToggle(subcat.slug)}
-                        className="w-5 h-5 rounded-lg border-2 border-purple-300 group-hover:border-purple-500 transition-colors"
+                        id={`brand-${brand}`}
+                        checked={filters.brands.includes(brand)}
+                        onCheckedChange={() => handleBrandToggle(brand)}
+                        className="rounded"
                       />
-                      <span className="ml-3 text-sm text-gray-600 group-hover:text-purple-600 transition-colors">
-                        {subcat.name}
-                      </span>
-                    </label>
+                      <Label htmlFor={`brand-${brand}`} className="text-sm cursor-pointer font-medium">
+                        {brand}
+                      </Label>
+                    </div>
                   ))}
                 </div>
-              </FilterSection>
-            )}
+              )}
+            </div>
 
-            {/* Preço */}
-            <FilterSection
-              title="Faixa de Preço"
-              isExpanded={expandedSections.price}
-              onToggle={() => toggleSection('price')}
-            >
-              <div className="space-y-5 pt-2">
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
-                  <Label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Mínimo</Label>
-                  <div className="text-2xl font-bold text-green-600 mt-1">R$ {filters.priceMin.toLocaleString('pt-BR')}</div>
-                  <Slider
-                    value={[filters.priceMin]}
-                    onValueChange={(val) => updateFilter('priceMin', val[0])}
-                    min={0}
-                    max={10000}
-                    step={100}
-                    className="mt-3"
-                  />
+            {/* Condition Filter */}
+            <div className="border border-gray-200 rounded-xl p-4 bg-gradient-to-br from-purple-50 to-pink-50">
+              <button
+                onClick={() => toggleSection('condition')}
+                className="w-full flex items-center justify-between mb-3 hover:opacity-75 transition"
+              >
+                <span className="font-bold text-gray-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                  Condição
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${expandedSections.condition ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {expandedSections.condition && (
+                <div className="space-y-2">
+                  {conditions.map(({ value, label }) => (
+                    <div key={value} className="flex items-center gap-3">
+                      <Checkbox
+                        id={`condition-${value}`}
+                        checked={filters.condition.includes(value)}
+                        onCheckedChange={() => handleConditionToggle(value)}
+                        className="rounded"
+                      />
+                      <Label htmlFor={`condition-${value}`} className="text-sm cursor-pointer font-medium">
+                        {label}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
+              )}
+            </div>
 
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
-                  <Label className="text-xs font-bold text-gray-600 uppercase tracking-wider">Máximo</Label>
-                  <div className="text-2xl font-bold text-blue-600 mt-1">R$ {filters.priceMax.toLocaleString('pt-BR')}</div>
-                  <Slider
-                    value={[filters.priceMax]}
-                    onValueChange={(val) => updateFilter('priceMax', val[0])}
-                    min={0}
-                    max={10000}
-                    step={100}
-                    className="mt-3"
-                  />
+            {/* Rating Filter */}
+            <div className="border border-gray-200 rounded-xl p-4 bg-gradient-to-br from-yellow-50 to-amber-50">
+              <button
+                onClick={() => toggleSection('rating')}
+                className="w-full flex items-center justify-between mb-3 hover:opacity-75 transition"
+              >
+                <span className="font-bold text-gray-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+                  Avaliação
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${expandedSections.rating ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {expandedSections.rating && (
+                <div className="space-y-2">
+                  {[5, 4, 3, 2, 1].map((stars) => (
+                    <button
+                      key={stars}
+                      onClick={() => updateFilter('rating', stars)}
+                      className={`w-full px-3 py-2 rounded-lg font-medium text-sm transition-all text-left flex items-center gap-2 ${
+                        filters.rating === stars
+                          ? 'bg-yellow-400 text-white'
+                          : 'bg-white text-gray-700 hover:bg-gray-100'
+                      }`}
+                    >
+                      {'★'.repeat(stars)}
+                      <span className="text-xs opacity-75">({stars}+)</span>
+                    </button>
+                  ))}
                 </div>
-              </div>
-            </FilterSection>
+              )}
+            </div>
 
-            {/* Marcas */}
-            <FilterSection
-              title="Marcas"
-              isExpanded={expandedSections.brands}
-              onToggle={() => toggleSection('brands')}
-              itemCount={brands.length}
-            >
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {brands.map((brand) => (
-                  <label key={brand} className="flex items-center group cursor-pointer">
+            {/* Shipping Filter */}
+            <div className="border border-gray-200 rounded-xl p-4 bg-gradient-to-br from-blue-50 to-cyan-50">
+              <button
+                onClick={() => toggleSection('shipping')}
+                className="w-full flex items-center justify-between mb-3 hover:opacity-75 transition"
+              >
+                <span className="font-bold text-gray-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                  Entrega
+                </span>
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${expandedSections.shipping ? 'rotate-180' : ''}`}
+                />
+              </button>
+
+              {expandedSections.shipping && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
                     <Checkbox
-                      checked={filters.brands.includes(brand)}
-                      onCheckedChange={() => handleBrandToggle(brand)}
-                      className="w-5 h-5 rounded-lg border-2 border-orange-300 group-hover:border-orange-500 transition-colors"
+                      id="free-shipping"
+                      checked={filters.freeShipping}
+                      onCheckedChange={(checked) => updateFilter('freeShipping', checked as boolean)}
+                      className="rounded"
                     />
-                    <span className="ml-3 text-sm text-gray-700 group-hover:text-orange-600 font-medium transition-colors">
-                      {brand}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </FilterSection>
-
-            {/* Condição */}
-            <FilterSection
-              title="Condição"
-              isExpanded={expandedSections.condition}
-              onToggle={() => toggleSection('condition')}
-            >
-              <div className="space-y-3">
-                {conditions.map((cond) => (
-                  <label key={cond} className="flex items-center group cursor-pointer">
+                    <Label htmlFor="free-shipping" className="text-sm cursor-pointer font-medium">
+                      Frete Grátis
+                    </Label>
+                  </div>
+                  <div className="flex items-center gap-3">
                     <Checkbox
-                      checked={filters.condition.includes(cond)}
-                      onCheckedChange={() => handleConditionToggle(cond)}
-                      className="w-5 h-5 rounded-lg border-2 border-pink-300 group-hover:border-pink-500 transition-colors"
+                      id="in-stock"
+                      checked={filters.inStock}
+                      onCheckedChange={(checked) => updateFilter('inStock', checked as boolean)}
+                      className="rounded"
                     />
-                    <span className="ml-3 text-sm text-gray-700 group-hover:text-pink-600 font-medium capitalize transition-colors">
-                      {cond}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </FilterSection>
-
-            {/* Disponibilidade */}
-            <FilterSection
-              title="Disponibilidade"
-              isExpanded={expandedSections.stock}
-              onToggle={() => toggleSection('stock')}
-            >
-              <div className="space-y-3">
-                <label className="flex items-center group cursor-pointer">
-                  <Checkbox
-                    checked={filters.inStock}
-                    onCheckedChange={(checked) => updateFilter('inStock', !!checked)}
-                    className="w-5 h-5 rounded-lg border-2 border-teal-300 group-hover:border-teal-500 transition-colors"
-                  />
-                  <span className="ml-3 text-sm text-gray-700 group-hover:text-teal-600 font-medium transition-colors">
-                    Apenas em estoque
-                  </span>
-                </label>
-                <label className="flex items-center group cursor-pointer">
-                  <Checkbox
-                    checked={filters.freeShipping}
-                    onCheckedChange={(checked) => updateFilter('freeShipping', !!checked)}
-                    className="w-5 h-5 rounded-lg border-2 border-cyan-300 group-hover:border-cyan-500 transition-colors"
-                  />
-                  <span className="ml-3 text-sm text-gray-700 group-hover:text-cyan-600 font-medium transition-colors">
-                    Frete grátis
-                  </span>
-                </label>
-              </div>
-            </FilterSection>
-
-            {/* Avaliação */}
-            <FilterSection
-              title="Avaliação Mínima"
-              isExpanded={expandedSections.rating}
-              onToggle={() => toggleSection('rating')}
-            >
-              <div className="space-y-2">
-                {[5, 4, 3, 2, 1].map((stars) => (
-                  <label key={stars} className="flex items-center group cursor-pointer p-2 rounded-lg hover:bg-yellow-50 transition-colors">
-                    <Checkbox
-                      checked={filters.rating === stars}
-                      onCheckedChange={(checked) => updateFilter('rating', checked ? stars : 0)}
-                      className="w-5 h-5 rounded-lg border-2 border-yellow-300 group-hover:border-yellow-500 transition-colors"
-                    />
-                    <span className="ml-3 text-sm font-medium">
-                      {'★'.repeat(stars)}{' '}
-                      <span className="text-gray-500">e acima</span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </FilterSection>
-
-            {/* Clear Button */}
-            <button
-              onClick={handleReset}
-              className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-gray-900 font-bold text-sm uppercase tracking-wide transition-all hover:shadow-md border border-gray-200"
-            >
-              Limpar Filtros
-            </button>
+                    <Label htmlFor="in-stock" className="text-sm cursor-pointer font-medium">
+                      Em Estoque
+                    </Label>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </>
-  )
-}
 
-// Filter Section Component
-function FilterSection({
-  title,
-  isExpanded,
-  onToggle,
-  children,
-  itemCount,
-  badge,
-}: {
-  title: string
-  isExpanded: boolean
-  onToggle: () => void
-  children: React.ReactNode
-  itemCount?: number
-  badge?: string
-}) {
-  return (
-    <div className="border-b border-gray-100 pb-5 last:border-b-0">
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between group p-2 -m-2 hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-indigo-50/50 rounded-lg transition-all"
-      >
-        <div className="flex items-center gap-2 flex-1">
-          <h4 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{title}</h4>
-          {itemCount !== undefined && itemCount > 0 && (
-            <span className="ml-auto inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-xs font-bold">
-              {itemCount}
-            </span>
-          )}
-          {badge && (
-            <span className="ml-auto px-2 py-1 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 text-xs font-bold rounded-full">
-              {badge}
-            </span>
-          )}
-        </div>
-        <ChevronDown
-          className={`w-5 h-5 text-gray-600 group-hover:text-blue-600 transition-all ${
-            isExpanded ? 'rotate-180' : ''
-          }`}
-        />
-      </button>
-      {isExpanded && <div className="mt-4 pl-2">{children}</div>}
-    </div>
+        {/* Footer */}
+        {activeFiltersCount > 0 && (
+          <div className="sticky bottom-0 bg-gradient-to-t from-white via-white to-transparent border-t border-gray-200 p-5 space-y-2">
+            <Button
+              onClick={handleReset}
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2 font-bold"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Limpar Filtros
+            </Button>
+          </div>
+        )}
+      </aside>
+    </>
   )
 }
