@@ -9,6 +9,7 @@ import { HeroSection } from '@/components/home/HeroSection'
 import { TrustBanner } from '@/components/home/TrustBanner'
 import { CategoriesGrid } from '@/components/home/CategoriesGrid'
 import { ProductGrid } from '@/components/home/ProductGrid'
+import { SectionBanner, bannerVariants } from '@/components/home/SectionBanner'
 import { CampaignBanner } from '@/components/home/CampaignBanner'
 import { FAQSection } from '@/components/home/FAQSection'
 import { CompareBar } from '@/components/home/CompareBar'
@@ -73,6 +74,16 @@ export default function Home() {
       {/* Categories Grid */}
       <CategoriesGrid />
 
+      {/* Flash Offers Banner */}
+      <section className="py-6 md:py-8">
+        <div className="container mx-auto px-4">
+          <SectionBanner
+            {...bannerVariants.flashDeals}
+            href="/busca?sort=discount"
+          />
+        </div>
+      </section>
+
       {/* Flash Offers */}
       <ProductGrid
         title="Ofertas Relâmpago"
@@ -81,6 +92,16 @@ export default function Home() {
         viewMoreHref="/busca?sort=discount"
         badge="flash"
       />
+
+      {/* Best Sellers Banner */}
+      <section className="py-6 md:py-8">
+        <div className="container mx-auto px-4">
+          <SectionBanner
+            {...bannerVariants.bestsellers}
+            href="/busca?sort=rating"
+          />
+        </div>
+      </section>
 
       {/* Best Sellers */}
       <ProductGrid
@@ -91,7 +112,14 @@ export default function Home() {
         badge="bestseller"
       />
 
-      {/* Price Ranges Section */}
+      {/* Price Ranges Banner */}
+      <section className="py-6 md:py-8">
+        <div className="container mx-auto px-4">
+          <SectionBanner
+            {...bannerVariants.priceRanges}
+          />
+        </div>
+      </section>
       <section className="py-12 md:py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-8 text-center">
