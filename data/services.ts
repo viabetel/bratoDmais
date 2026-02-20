@@ -225,6 +225,7 @@ export const services: ServiceOption[] = [
     categories: ['smartphones', 'tvs', 'notebooks'],
     type: 'protection',
   },
+]
 
 // Service availability by category
 export const servicesByCategory: Record<string, ServiceOption[]> = {}
