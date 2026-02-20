@@ -5,8 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Star, Heart, ShoppingCart, Check, Package, Truck, Eye, Share2, BarChart3 } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cartStore'
-import { useFavoritesStore } from '@/lib/store/favoritesStore'
-import { Product } from '@/data/products'
+import { useCompareStore } from '@/lib/store/compareStore'
 import { formatBRL, getDiscountPercent, getPixPrice } from '@/lib/utils/format'
 
 interface ProductCardProps {
@@ -38,11 +37,13 @@ function getPlaceholderImage(product: Product): string {
 }
 
 export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
-  const [feedback, setFeedback] = useState<'cart' | 'favorite' | 'share' | null>(null)
+  const [feedback, setFeedback] = useState<'cart' | 'favorite' | 'share' | 'compare' | null>(null)
   const [imageError, setImageError] = useState(false)
   const addItem = useCartStore((state) => state.addItem)
   const isFavorite = useFavoritesStore((state) => state.isFavorite(product.id))
   const toggleFavorite = useFavoritesStore((state) => state.toggleFavorite)
+  const isComparing = useCompareStore((state) => state.isComparing(product.id))
+  const toggleCompare = useCompareStore((state) => state.toggleItem)
 
   const discountPercent = getDiscountPercent(product.originalPrice, product.price)
   const pixPrice = getPixPrice(product.price)
@@ -86,6 +87,14 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
       })
     }
     setFeedback('share')
+    setTimeout(() => setFeedback(null), 1500)
+  }
+
+  const handleToggleCompare = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleCompare(product, imageUrl)
+    setFeedback('compare')
     setTimeout(() => setFeedback(null), 1500)
   }
 
@@ -214,8 +223,13 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
             </button>
             
             <button
-              className="p-2 bg-white hover:bg-purple-50 text-gray-600 hover:text-purple-600 rounded-full backdrop-blur-sm transition-all shadow-sm"
-              title="Comparar"
+              onClick={handleToggleCompare}
+              className={`p-2 rounded-full backdrop-blur-sm transition-all shadow-sm ${
+                isComparing 
+                  ? 'bg-purple-500 text-white' 
+                  : 'bg-white hover:bg-purple-50 text-gray-600 hover:text-purple-600'
+              }`}
+              title={isComparing ? 'Remover de comparação' : 'Adicionar à comparação'}
             >
               <BarChart3 className="w-5 h-5" />
             </button>
