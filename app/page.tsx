@@ -64,10 +64,15 @@ export default function Home() {
   const ate999 = getAtePrix(999)
   
   // Get featured services
-  const instalacaoServices = getServicesByType('installation').slice(0, 2)
-  const aluguelServices = getServicesByType('rental').slice(0, 2)
-  const manutencaoServices = getServicesByType('maintenance').slice(0, 2)
-  const allServices = [...instalacaoServices, ...aluguelServices, ...manutencaoServices].slice(0, 6)
+  try {
+    const instalacaoServices = getServicesByType('installation').slice(0, 2)
+    const aluguelServices = getServicesByType('rental').slice(0, 2)
+    const manutencaoServices = getServicesByType('maintenance').slice(0, 2)
+    var allServices = [...instalacaoServices, ...aluguelServices, ...manutencaoServices].slice(0, 6)
+  } catch (error) {
+    console.error('[v0] Error loading services:', error)
+    var allServices = []
+  }
 
   return (
     <div className="min-h-screen bg-white">

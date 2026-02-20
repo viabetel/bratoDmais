@@ -12,7 +12,6 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { categories } from '@/data/categories'
-import { getServicesByType } from '@/data/services'
 import { useCartStore } from '@/lib/store/cartStore'
 import { useFavoritesStore } from '@/lib/store/favoritesStore'
 import { useUserStore } from '@/lib/store/userStore'
