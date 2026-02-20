@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown, X, Sliders, RotateCcw } from 'lucide-react'
+import { ChevronDown, X, Sliders, RotateCcw, Filter } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -26,6 +26,368 @@ export interface FiltersState {
   inStock: boolean
   rating: number
   freeShipping: boolean
+}
+
+export function ProfessionalFilterSidebar({
+  currentCategory,
+  onFilterChange,
+  isOpen = true,
+  onClose,
+}: ProfessionalFilterSidebarProps) {
+  const [filters, setFilters] = useState<FiltersState>({
+    priceMin: 0,
+    priceMax: 10000,
+    brands: [],
+    condition: [],
+    categories: currentCategory ? [currentCategory] : [],
+    inStock: false,
+    rating: 0,
+    freeShipping: false,
+  })
+
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    price: true,
+    brands: true,
+    categories: true,
+    condition: false,
+    rating: false,
+    shipping: false,
+  })
+
+  const uniqueBrands = [...new Set(products.map(p => p.brand))].sort()
+  const activeFilterCount = Object.values(filters).filter(v => 
+    Array.isArray(v) ? v.length > 0 : v !== 0 && v !== false
+  ).length
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }))
+  }
+
+  const handlePriceChange = (values: number[]) => {
+    const newFilters = { ...filters, priceMin: values[0], priceMax: values[1] }
+    setFilters(newFilters)
+    onFilterChange(newFilters)
+  }
+
+  const handleBrandToggle = (brand: string) => {
+    const newBrands = filters.brands.includes(brand)
+      ? filters.brands.filter(b => b !== brand)
+      : [...filters.brands, brand]
+    const newFilters = { ...filters, brands: newBrands }
+    setFilters(newFilters)
+    onFilterChange(newFilters)
+  }
+
+  const handleConditionToggle = (condition: string) => {
+    const newConditions = filters.condition.includes(condition)
+      ? filters.condition.filter(c => c !== condition)
+      : [...filters.condition, condition]
+    const newFilters = { ...filters, condition: newConditions }
+    setFilters(newFilters)
+    onFilterChange(newFilters)
+  }
+
+  const handleRatingChange = (rating: number) => {
+    const newFilters = { ...filters, rating: filters.rating === rating ? 0 : rating }
+    setFilters(newFilters)
+    onFilterChange(newFilters)
+  }
+
+  const handleClearFilters = () => {
+    const clearedFilters: FiltersState = {
+      priceMin: 0,
+      priceMax: 10000,
+      brands: [],
+      condition: [],
+      categories: currentCategory ? [currentCategory] : [],
+      inStock: false,
+      rating: 0,
+      freeShipping: false,
+    }
+    setFilters(clearedFilters)
+    onFilterChange(clearedFilters)
+  }
+
+  // Mobile drawer view
+  if (!isOpen && onClose) {
+    return null
+  }
+
+  return (
+    <>
+      {/* Overlay for mobile */}
+      {!isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/30 z-30 md:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar - FIXED POSITION */}
+      <div className={`fixed top-0 left-0 h-screen w-64 bg-white border-r border-gray-200 shadow-lg z-40 transition-transform duration-300 md:relative md:w-80 ${
+        !isOpen ? '-translate-x-full' : 'translate-x-0'
+      } md:translate-x-0 md:h-auto md:border-r md:shadow-none`}>
+        
+        {/* Header */}
+        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 border-b border-indigo-700">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Filter className="w-5 h-5" />
+              <h2 className="font-bold text-lg">Filtros</h2>
+            </div>
+            <button
+              onClick={onClose}
+              className="md:hidden p-1 hover:bg-white/20 rounded-lg transition"
+              aria-label="Fechar filtros"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          {activeFilterCount > 0 && (
+            <div className="flex items-center justify-between text-sm">
+              <span className="bg-white/20 px-2 py-1 rounded-full">{activeFilterCount} ativo(s)</span>
+              <button
+                onClick={handleClearFilters}
+                className="flex items-center gap-1 bg-white/20 hover:bg-white/30 px-2 py-1 rounded transition text-xs font-semibold"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Limpar
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Filters Container - SCROLLABLE */}
+        <div className="overflow-y-auto h-[calc(100vh-120px)] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div className="p-4 space-y-3">
+            
+            {/* PREÇO */}
+            <div className="border-b border-gray-100 pb-4">
+              <button
+                onClick={() => toggleSection('price')}
+                className="w-full flex items-center justify-between font-semibold text-gray-900 mb-3 hover:text-blue-600 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-green-500"></span>
+                  Preço
+                </span>
+                <ChevronDown className={`w-4 h-4 transition ${expandedSections.price ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedSections.price && (
+                <div className="space-y-3">
+                  <Slider
+                    value={[filters.priceMin, filters.priceMax]}
+                    onValueChange={handlePriceChange}
+                    min={0}
+                    max={10000}
+                    step={100}
+                    className="w-full"
+                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
+                      <span className="text-xs text-gray-600">Mín</span>
+                      <p className="font-bold text-sm text-green-600">R$ {filters.priceMin}</p>
+                    </div>
+                    <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
+                      <span className="text-xs text-gray-600">Máx</span>
+                      <p className="font-bold text-sm text-green-600">R$ {filters.priceMax}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* MARCAS */}
+            <div className="border-b border-gray-100 pb-4">
+              <button
+                onClick={() => toggleSection('brands')}
+                className="w-full flex items-center justify-between font-semibold text-gray-900 mb-3 hover:text-blue-600 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+                  Marcas
+                </span>
+                <ChevronDown className={`w-4 h-4 transition ${expandedSections.brands ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedSections.brands && (
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {uniqueBrands.map(brand => (
+                    <label key={brand} className="flex items-center gap-2 cursor-pointer group">
+                      <Checkbox
+                        checked={filters.brands.includes(brand)}
+                        onCheckedChange={() => handleBrandToggle(brand)}
+                        className="group-hover:border-orange-500"
+                      />
+                      <span className="text-sm text-gray-700 group-hover:text-orange-600 transition">{brand}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* CATEGORIAS */}
+            <div className="border-b border-gray-100 pb-4">
+              <button
+                onClick={() => toggleSection('categories')}
+                className="w-full flex items-center justify-between font-semibold text-gray-900 mb-3 hover:text-blue-600 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+                  Categorias
+                </span>
+                <ChevronDown className={`w-4 h-4 transition ${expandedSections.categories ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedSections.categories && (
+                <div className="space-y-2">
+                  {categories.map(cat => (
+                    <label key={cat.slug} className="flex items-center gap-2 cursor-pointer group">
+                      <Checkbox
+                        checked={filters.categories.includes(cat.slug)}
+                        onCheckedChange={() => {
+                          const newCats = filters.categories.includes(cat.slug)
+                            ? filters.categories.filter(c => c !== cat.slug)
+                            : [...filters.categories, cat.slug]
+                          const newFilters = { ...filters, categories: newCats }
+                          setFilters(newFilters)
+                          onFilterChange(newFilters)
+                        }}
+                        className="group-hover:border-blue-500"
+                      />
+                      <span className="text-sm text-gray-700 group-hover:text-blue-600 transition">{cat.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* CONDIÇÃO */}
+            <div className="border-b border-gray-100 pb-4">
+              <button
+                onClick={() => toggleSection('condition')}
+                className="w-full flex items-center justify-between font-semibold text-gray-900 mb-3 hover:text-blue-600 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+                  Condição
+                </span>
+                <ChevronDown className={`w-4 h-4 transition ${expandedSections.condition ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedSections.condition && (
+                <div className="space-y-2">
+                  {['novo', 'seminovo'].map(cond => (
+                    <label key={cond} className="flex items-center gap-2 cursor-pointer group">
+                      <Checkbox
+                        checked={filters.condition.includes(cond)}
+                        onCheckedChange={() => handleConditionToggle(cond)}
+                        className="group-hover:border-purple-500"
+                      />
+                      <span className="text-sm text-gray-700 group-hover:text-purple-600 transition capitalize">
+                        {cond === 'novo' ? 'Novo' : 'Seminovo'}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* AVALIAÇÃO */}
+            <div className="border-b border-gray-100 pb-4">
+              <button
+                onClick={() => toggleSection('rating')}
+                className="w-full flex items-center justify-between font-semibold text-gray-900 mb-3 hover:text-blue-600 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
+                  Avaliação
+                </span>
+                <ChevronDown className={`w-4 h-4 transition ${expandedSections.rating ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedSections.rating && (
+                <div className="space-y-2">
+                  {[5, 4, 3].map(rating => (
+                    <button
+                      key={rating}
+                      onClick={() => handleRatingChange(rating)}
+                      className={`w-full text-left p-2 rounded-lg transition flex items-center gap-2 ${
+                        filters.rating === rating
+                          ? 'bg-yellow-100 border border-yellow-500 text-yellow-700'
+                          : 'hover:bg-yellow-50 text-gray-700'
+                      }`}
+                    >
+                      <span className="flex gap-0.5">
+                        {[...Array(rating)].map((_, i) => (
+                          <span key={i} className="text-yellow-400">★</span>
+                        ))}
+                      </span>
+                      <span className="text-sm">{rating}+ estrelas</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* FRETE */}
+            <div>
+              <button
+                onClick={() => toggleSection('shipping')}
+                className="w-full flex items-center justify-between font-semibold text-gray-900 mb-3 hover:text-blue-600 transition"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="w-3 h-3 rounded-full bg-red-500"></span>
+                  Frete
+                </span>
+                <ChevronDown className={`w-4 h-4 transition ${expandedSections.shipping ? 'rotate-180' : ''}`} />
+              </button>
+              {expandedSections.shipping && (
+                <div className="space-y-2">
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <Checkbox
+                      checked={filters.freeShipping}
+                      onCheckedChange={() => {
+                        const newFilters = { ...filters, freeShipping: !filters.freeShipping }
+                        setFilters(newFilters)
+                        onFilterChange(newFilters)
+                      }}
+                      className="group-hover:border-red-500"
+                    />
+                    <span className="text-sm text-gray-700 group-hover:text-red-600 transition">Frete Grátis</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer group">
+                    <Checkbox
+                      checked={filters.inStock}
+                      onCheckedChange={() => {
+                        const newFilters = { ...filters, inStock: !filters.inStock }
+                        setFilters(newFilters)
+                        onFilterChange(newFilters)
+                      }}
+                      className="group-hover:border-red-500"
+                    />
+                    <span className="text-sm text-gray-700 group-hover:text-red-600 transition">Apenas em estoque</span>
+                  </label>
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+
+        {/* Footer - Sticky */}
+        <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-4 space-y-2">
+          <Button 
+            onClick={handleClearFilters}
+            variant="outline"
+            className="w-full text-sm"
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Limpar Todos
+          </Button>
+        </div>
+      </div>
+    </>
+  )
 }
 
 interface FilterSection {
