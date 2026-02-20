@@ -390,11 +390,6 @@ export function ProfessionalFilterSidebar({
   )
 }
 
-  const conditions = [
-    { value: 'novo', label: 'Novo' },
-    { value: 'reembalado', label: 'Reembalado' },
-    { value: 'remanufaturado', label: 'Remanufaturado' },
-  ]
 
   const toggleSection = (section: keyof typeof expandedSections) => {
     setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }))
