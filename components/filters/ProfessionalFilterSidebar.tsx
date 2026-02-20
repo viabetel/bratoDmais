@@ -182,27 +182,45 @@ export function ProfessionalFilterSidebar({
           expanded={sections.price}
           onToggle={() => toggle('price')}
         >
-          <div className="space-y-2.5 pl-0">
+          <div className="space-y-4 pl-0">
             <Slider
               value={[filters.priceMin, filters.priceMax]}
               onValueChange={(v) => update({ priceMin: v[0], priceMax: v[1] })}
               min={0}
               max={10000}
               step={100}
-              className="mb-3"
+              className="w-full"
             />
-            <div className="grid grid-cols-2 gap-2.5">
-              <div className="bg-emerald-50 rounded-lg px-3.5 py-2.5 border border-emerald-200">
-                <span className="text-xs font-medium text-emerald-600 block mb-1">Mínimo</span>
-                <span className="text-sm font-bold text-emerald-900">
-                  R$ {filters.priceMin.toLocaleString('pt-BR')}
-                </span>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col">
+                <label className="text-xs font-semibold text-gray-600 mb-2 block">Mínimo</label>
+                <input
+                  type="number"
+                  value={filters.priceMin}
+                  onChange={(e) => {
+                    const val = Math.max(0, parseInt(e.target.value) || 0)
+                    if (val <= filters.priceMax) {
+                      update({ priceMin: val })
+                    }
+                  }}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+                <span className="text-xs text-gray-500 mt-1.5">R$ {filters.priceMin.toLocaleString('pt-BR')}</span>
               </div>
-              <div className="bg-emerald-50 rounded-lg px-3.5 py-2.5 border border-emerald-200">
-                <span className="text-xs font-medium text-emerald-600 block mb-1">Máximo</span>
-                <span className="text-sm font-bold text-emerald-900">
-                  R$ {filters.priceMax.toLocaleString('pt-BR')}
-                </span>
+              <div className="flex flex-col">
+                <label className="text-xs font-semibold text-gray-600 mb-2 block">Máximo</label>
+                <input
+                  type="number"
+                  value={filters.priceMax}
+                  onChange={(e) => {
+                    const val = Math.min(10000, parseInt(e.target.value) || 10000)
+                    if (val >= filters.priceMin) {
+                      update({ priceMax: val })
+                    }
+                  }}
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+                <span className="text-xs text-gray-500 mt-1.5">R$ {filters.priceMax.toLocaleString('pt-BR')}</span>
               </div>
             </div>
           </div>
@@ -218,11 +236,11 @@ export function ProfessionalFilterSidebar({
           expanded={sections.brands}
           onToggle={() => toggle('brands')}
         >
-          <div className="space-y-2 pl-0 max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-200 scrollbar-track-orange-50">
+          <div className="space-y-2 pl-0 max-h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-orange-200 scrollbar-track-orange-50">
             {uniqueBrands.map((brand) => (
               <label
                 key={brand}
-                className="flex items-center gap-2.5 cursor-pointer py-2 px-2.5 rounded-lg hover:bg-orange-50/80 transition-colors"
+                className="flex items-center gap-3 cursor-pointer py-2.5 px-3 rounded-lg hover:bg-orange-50/80 transition-colors group"
               >
                 <Checkbox
                   checked={filters.brands.includes(brand)}
@@ -232,9 +250,9 @@ export function ProfessionalFilterSidebar({
                       : [...filters.brands, brand]
                     update({ brands: next })
                   }}
-                  className="h-4 w-4"
+                  className="h-5 w-5 group-hover:border-orange-500"
                 />
-                <span className="text-sm text-gray-700 font-medium">{brand}</span>
+                <span className="text-sm text-gray-700 font-medium group-hover:text-orange-600 transition-colors flex-grow">{brand}</span>
               </label>
             ))}
           </div>
@@ -250,14 +268,14 @@ export function ProfessionalFilterSidebar({
           expanded={sections.condition}
           onToggle={() => toggle('condition')}
         >
-          <div className="space-y-2 pl-0">
+          <div className="space-y-2.5 pl-0">
             {[
-              { value: 'novo', label: 'Novo' },
-              { value: 'seminovo', label: 'Seminovo' },
+              { value: 'novo', label: 'Novo', icon: '✨' },
+              { value: 'seminovo', label: 'Seminovo', icon: '👍' },
             ].map((c) => (
               <label
                 key={c.value}
-                className="flex items-center gap-2.5 cursor-pointer py-2 px-2.5 rounded-lg hover:bg-purple-50/80 transition-colors"
+                className="flex items-center gap-3 cursor-pointer py-2.5 px-3 rounded-lg hover:bg-purple-50/80 transition-colors group"
               >
                 <Checkbox
                   checked={filters.condition.includes(c.value)}
@@ -267,9 +285,10 @@ export function ProfessionalFilterSidebar({
                       : [...filters.condition, c.value]
                     update({ condition: next })
                   }}
-                  className="h-4 w-4"
+                  className="h-5 w-5 group-hover:border-purple-500"
                 />
-                <span className="text-sm text-gray-700 font-medium">{c.label}</span>
+                <span className="text-lg">{c.icon}</span>
+                <span className="text-sm text-gray-700 font-medium group-hover:text-purple-600 transition-colors">{c.label}</span>
               </label>
             ))}
           </div>
@@ -279,31 +298,33 @@ export function ProfessionalFilterSidebar({
 
         {/* Rating */}
         <FilterSection
-          title="Avaliação"
+          title="Avaliação Mínima"
           color="bg-amber-500"
           expanded={sections.rating}
           onToggle={() => toggle('rating')}
         >
-          <div className="space-y-2 pl-0">
+          <div className="space-y-2.5 pl-0">
             {[5, 4, 3].map((r) => (
               <button
                 key={r}
                 onClick={() => update({ rating: filters.rating === r ? 0 : r })}
-                className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-lg text-left transition-colors ${
+                className={`w-full flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-left transition-colors group ${
                   filters.rating === r
-                    ? 'bg-amber-100 border border-amber-300'
-                    : 'hover:bg-amber-50/80'
+                    ? 'bg-amber-100 border-2 border-amber-400'
+                    : 'border-2 border-transparent hover:bg-amber-50/80'
                 }`}
               >
                 <span className="flex gap-0.5">
-                  {[...Array(r)].map((_, i) => (
+                  {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
+                      className={`w-4 h-4 transition-colors ${
+                        i < r ? 'fill-amber-400 text-amber-400' : 'text-gray-300'
+                      }`}
                     />
                   ))}
                 </span>
-                <span className="text-sm text-gray-700 font-medium">e acima</span>
+                <span className="text-sm text-gray-700 font-medium">{r}+ Estrelas</span>
               </button>
             ))}
           </div>
@@ -313,30 +334,31 @@ export function ProfessionalFilterSidebar({
 
         {/* Shipping */}
         <FilterSection
-          title="Entrega"
+          title="Entrega & Estoque"
           color="bg-blue-500"
           expanded={sections.shipping}
           onToggle={() => toggle('shipping')}
         >
-          <div className="space-y-2 pl-0">
-            <label className="flex items-center gap-2.5 cursor-pointer py-2 px-2.5 rounded-lg hover:bg-blue-50/80 transition-colors">
+          <div className="space-y-2.5 pl-0">
+            <label className="flex items-center gap-3 cursor-pointer py-2.5 px-3 rounded-lg hover:bg-blue-50/80 transition-colors group">
               <Checkbox
                 checked={filters.freeShipping}
                 onCheckedChange={() =>
                   update({ freeShipping: !filters.freeShipping })
                 }
-                className="h-4 w-4"
+                className="h-5 w-5 group-hover:border-blue-500"
               />
-              <Truck className="w-4 h-4 text-green-600 flex-shrink-0" />
-              <span className="text-sm text-gray-700 font-medium">Frete Grátis</span>
+              <Truck className="w-5 h-5 text-green-600 flex-shrink-0" />
+              <span className="text-sm text-gray-700 font-medium group-hover:text-blue-600 transition-colors">Frete Grátis</span>
             </label>
-            <label className="flex items-center gap-2.5 cursor-pointer py-2 px-2.5 rounded-lg hover:bg-blue-50/80 transition-colors">
+            <label className="flex items-center gap-3 cursor-pointer py-2.5 px-3 rounded-lg hover:bg-blue-50/80 transition-colors group">
               <Checkbox
                 checked={filters.inStock}
                 onCheckedChange={() => update({ inStock: !filters.inStock })}
-                className="h-4 w-4"
+                className="h-5 w-5 group-hover:border-blue-500"
               />
-              <span className="text-sm text-gray-700 font-medium">Em estoque</span>
+              <span className="text-lg">📦</span>
+              <span className="text-sm text-gray-700 font-medium group-hover:text-blue-600 transition-colors">Em Estoque</span>
             </label>
           </div>
         </FilterSection>
