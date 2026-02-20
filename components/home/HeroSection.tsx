@@ -84,7 +84,7 @@ export function HeroSection() {
   return (
     <section className="relative bg-white pt-0 pb-0 overflow-hidden">
       {/* Carousel Container */}
-      <div className="relative h-96 md:h-[500px] lg:h-[600px] w-full overflow-hidden">
+      <div className="relative h-64 md:h-80 lg:h-96 w-full overflow-hidden">
         {/* Slides */}
         {heroSlides.map((s, idx) => (
           <div
