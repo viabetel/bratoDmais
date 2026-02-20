@@ -8,6 +8,9 @@ import { useCartStore } from '@/lib/store/cartStore'
 import { useCompareStore } from '@/lib/store/compareStore'
 import { useFavoritesStore } from '@/lib/store/favoritesStore'
 import { Product } from '@/data/products'
+import { formatBRL, getDiscountPercent, getPixPrice } from '@/lib/utils/format'
+
+interface ProductCardProps {
   product: Product
   variant?: 'default' | 'grid' | 'list'
 }
@@ -110,19 +113,19 @@ export function ProductCard({ product, variant = 'grid' }: ProductCardProps) {
               onError={() => setImageError(true)}
             />
             {discountPercent > 0 && (
-              <span className="bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+              <span className="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
                 -{discountPercent}% OFF
               </span>
             )}
             {product.freeShipping && (
-              <span className="bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
+              <span className="absolute top-12 left-2 bg-green-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center gap-1">
                 <Truck className="w-3 h-3" />
                 Frete Grátis
               </span>
             )}
             {product.stock > 0 && product.stock <= 5 && (
-              <span className="bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
-                Últimas {product.stock} unidades!
+              <span className="absolute bottom-2 left-2 bg-orange-500 text-white px-3 py-1 rounded-lg text-xs font-bold shadow-sm">
+                Últimas {product.stock}!
               </span>
             )}
           </div>
