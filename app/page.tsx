@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowRight, Truck, Shield, CreditCard, Zap, Flame, Refrigerator, Microwave, Droplets, Star, Award, Headset, Banknote, ChevronRight, Sparkles, Wrench, Calendar, Package } from 'lucide-react'
+import { ArrowRight, Truck, Shield, CreditCard, Zap, Flame, Refrigerator, Microwave, Droplets, Star, Award, Headset, Banknote, ChevronRight, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { products } from '@/data/products'
 import { ProductCard } from '@/components/products/ProductCard'
