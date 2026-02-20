@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Grid3x3, List, SlidersHorizontal, Package } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ProductCard } from '@/components/products/ProductCard'
+import { ServiceCard } from '@/components/services/ServiceCard'
+import { ServicesSummary } from '@/components/services/ServicesSummary'
 import {
   ProfessionalFilterSidebar,
   FiltersState,
@@ -13,6 +15,7 @@ import {
 import { ServiceModeSelector, type ServiceMode } from '@/components/services/ServiceModeSelector'
 import { products } from '@/data/products'
 import { categories } from '@/data/categories'
+import { getServicesByCategory, getServicesByType } from '@/data/services'
 import { getCategoryBySlug, getSubcategorySlugs } from '@/lib/utils/categories'
 
 interface CategoryPageProps {
@@ -203,52 +206,92 @@ export default function CategoryPage({ params }: CategoryPageProps) {
               </div>
             </div>
 
-            {/* Products */}
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
-                <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm text-gray-600 mb-4">
-                  Nenhum produto encontrado com os filtros selecionados
-                </p>
-                <Button
-                  size="sm"
-                  onClick={() =>
-                    setFilters({
-                      priceMin: 0,
-                      priceMax: 10000,
-                      brands: [],
-                      condition: [],
-                      categories: [slug],
-                      inStock: false,
-                      rating: 0,
-                      freeShipping: false,
-                    })
+            {/* Products/Services Grid */}
+            {mode === 'buy' ? (
+              // PRODUTOS MODE
+              filteredProducts.length === 0 ? (
+                <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
+                  <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm text-gray-600 mb-4">
+                    Nenhum produto encontrado com os filtros selecionados
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={() =>
+                      setFilters({
+                        priceMin: 0,
+                        priceMax: 10000,
+                        brands: [],
+                        condition: [],
+                        categories: [slug],
+                        inStock: false,
+                        rating: 0,
+                        freeShipping: false,
+                      })
+                    }
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Limpar Filtros
+                  </Button>
+                </div>
+              ) : (
+                <div
+                  className={
+                    layout === 'grid'
+                      ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
+                      : 'space-y-3'
                   }
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
                 >
-                  Limpar Filtros
-                </Button>
-              </div>
+                  {filteredProducts.map((product) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      variant={layout === 'list' ? 'list' : 'grid'}
+                    />
+                  ))}
+                </div>
+              )
             ) : (
-              <div
-                className={
-                  layout === 'grid'
-                    ? 'grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'
-                    : 'space-y-3'
-                }
-              >
-                {filteredProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    variant={layout === 'list' ? 'list' : 'grid'}
-                  />
-                ))}
-              </div>
+              // SERVIÇOS MODE (Rental/Maintenance)
+              (() => {
+                const applicableServices = 
+                  mode === 'rent'
+                    ? getServicesByType('rental', applicableSubcategorySlugs[0])
+                    : getServicesByType('maintenance', applicableSubcategorySlugs[0])
+
+                return applicableServices.length === 0 ? (
+                  <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
+                    <Package className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-sm text-gray-600 mb-4">
+                      Nenhum serviço de {mode === 'rent' ? 'aluguel' : 'manutenção'} disponível nesta categoria
+                    </p>
+                    <Button
+                      size="sm"
+                      onClick={() => setMode('buy')}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      Voltar para Produtos
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {applicableServices.map((service) => (
+                      <ServiceCard
+                        key={service.id}
+                        service={service}
+                        isRental={mode === 'rent'}
+                      />
+                    ))}
+                  </div>
+                )
+              })()
             )}
           </div>
         </div>
       </div>
+      
+      {/* Services Summary Floating Panel */}
+      <ServicesSummary />
     </main>
   )
 }

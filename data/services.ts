@@ -114,7 +114,6 @@ export const services: ServiceOption[] = [
     type: 'maintenance',
   },
   
-  // Rental Options (by category)
   {
     id: 'rent-001',
     name: 'Aluguel Diário',
@@ -142,7 +141,90 @@ export const services: ServiceOption[] = [
     categories: ['geladeiras', 'maquinas-lavar', 'climatizacao'],
     type: 'rental',
   },
-]
+  
+  // More Installation Services
+  {
+    id: 'inst-003',
+    name: 'Instalação AC Split',
+    description: 'Especializada em ar-condicionado split com canos hidráulicos',
+    price: 599,
+    duration: '3-5 horas',
+    categories: ['climatizacao', 'ar-condicionado'],
+    type: 'installation',
+  },
+  {
+    id: 'inst-004',
+    name: 'Instalação de Encanação',
+    description: 'Adaptação de encanação e instalação com testes de vazamento',
+    price: 399,
+    duration: '2-3 horas',
+    categories: ['geladeiras', 'maquinas-lavar'],
+    type: 'installation',
+  },
+  
+  // More Maintenance Services
+  {
+    id: 'mant-004',
+    name: 'Plano Ouro - Manutenção Trimestral',
+    description: '4 visitas por ano com prioridade no agendamento',
+    price: 799,
+    categories: ['climatizacao', 'geladeiras', 'maquinas-lavar'],
+    type: 'maintenance',
+  },
+  {
+    id: 'mant-005',
+    name: 'Limpeza Profissional de AC',
+    description: 'Higienização completa do sistema de ar-condicionado',
+    price: 249,
+    duration: '1-2 horas',
+    categories: ['climatizacao', 'ar-condicionado'],
+    type: 'maintenance',
+  },
+  {
+    id: 'mant-006',
+    name: 'Substituição de Filtros',
+    description: 'Troca de filtros e análise de funcionalidade',
+    price: 149,
+    duration: '30 min',
+    categories: ['climatizacao', 'ar-condicionado', 'geladeiras'],
+    type: 'maintenance',
+  },
+  
+  // Extended Warranties
+  {
+    id: 'war-003',
+    name: 'Garantia Estendida 36 meses',
+    description: 'Proteção de 3 anos com cobertura total incluindo peças',
+    price: 299,
+    categories: ['geladeiras', 'climatizacao', 'maquinas-lavar'],
+    type: 'warranty',
+  },
+  {
+    id: 'war-004',
+    name: 'Proteção com Seguro',
+    description: 'Garantia estendida + seguro contra roubo e sinistros',
+    price: 449,
+    categories: ['smartphones', 'notebooks', 'tvs'],
+    type: 'warranty',
+  },
+  
+  // More Protection Plans
+  {
+    id: 'prot-003',
+    name: 'Proteção Premium Plus',
+    description: 'Cobertura máxima: acidentes, roubo, sinistros, até R$ 10.000',
+    price: 599,
+    categories: ['smartphones', 'notebooks', 'tvs', 'eletronicos'],
+    type: 'protection',
+  },
+  {
+    id: 'prot-004',
+    name: 'Seguro de Produto',
+    description: 'Cobertura securitária com indenização total do equipamento',
+    price: 249,
+    categories: ['smartphones', 'tvs', 'notebooks'],
+    type: 'protection',
+  },
 
 // Service availability by category
 export const servicesByCategory: Record<string, ServiceOption[]> = {}
