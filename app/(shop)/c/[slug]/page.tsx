@@ -15,7 +15,7 @@ import {
 import { ServiceModeSelector, type ServiceMode } from '@/components/services/ServiceModeSelector'
 import { products } from '@/data/products'
 import { categories } from '@/data/categories'
-import { getServicesByCategory, getServicesByType } from '@/data/services'
+import { getServicesByType } from '@/data/services'
 import { getCategoryBySlug, getSubcategorySlugs } from '@/lib/utils/categories'
 
 interface CategoryPageProps {
@@ -254,10 +254,9 @@ export default function CategoryPage({ params }: CategoryPageProps) {
             ) : (
               // SERVIÇOS MODE (Rental/Maintenance)
               (() => {
-                const applicableServices = 
-                  mode === 'rent'
-                    ? getServicesByType('rental', applicableSubcategorySlugs[0])
-                    : getServicesByType('maintenance', applicableSubcategorySlugs[0])
+                const applicableServices = mode === 'rent'
+                  ? getServicesByType('rental')
+                  : getServicesByType('maintenance')
 
                 return applicableServices.length === 0 ? (
                   <div className="text-center py-16 bg-white rounded-xl border border-gray-200/80">
