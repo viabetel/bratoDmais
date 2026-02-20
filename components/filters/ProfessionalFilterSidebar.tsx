@@ -390,14 +390,6 @@ export function ProfessionalFilterSidebar({
   )
 }
 
-    price: true,
-    brands: true,
-    condition: false,
-    rating: false,
-    shipping: false,
-  })
-
-  const brands = Array.from(new Set(products.map((p) => p.brand))).sort().slice(0, 12)
   const conditions = [
     { value: 'novo', label: 'Novo' },
     { value: 'reembalado', label: 'Reembalado' },
