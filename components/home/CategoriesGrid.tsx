@@ -6,28 +6,28 @@ import { ArrowRight, Refrigerator, Flame, Microwave, Wind } from 'lucide-react'
 const categories = [
   {
     title: 'Geladeiras',
-    href: '/busca?categoria=geladeiras',
+    href: '/c/geladeiras',
     icon: Refrigerator,
     bg: 'from-blue-500 to-blue-600',
     count: 15,
   },
   {
     title: 'Fogões',
-    href: '/busca?categoria=fogoes',
+    href: '/c/fogoes',
     icon: Flame,
     bg: 'from-orange-500 to-red-600',
     count: 15,
   },
   {
     title: 'Micro-ondas',
-    href: '/busca?categoria=microondas',
+    href: '/c/microondas',
     icon: Microwave,
     bg: 'from-purple-500 to-purple-600',
     count: 15,
   },
   {
     title: 'Climatização',
-    href: '/busca?categoria=climatizacao',
+    href: '/c/climatizacao',
     icon: Wind,
     bg: 'from-cyan-500 to-blue-600',
     count: 7,
